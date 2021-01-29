@@ -39,6 +39,7 @@ section .data
     msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
     msjCuantasMatrices          db  "Ingrese cuantas matrices que quiere restar",0
     msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
+    msjCualesMatricesRestar     db  "Cuales de las siguiente matrices desea restar?",0
 
         
 
@@ -254,67 +255,6 @@ elementoInvalido:
     call    puts
 ret
 
-imprimirMatrices:
-
-	mov rax, 0
-	mov rdi, msjMostrarMatriz
-	sub rsp, 8
-	call printf
-	add rsp, 8
-
-    sub rbx,rbx
-    mov rbx,0
-
-    sub rcx,rcx
-    mov rcx,2
-
-imprimir:
-    mov qword[auxiliarMatrices],rcx
-
-    sub rcx,rcx
-    mov cx,word[fila]
-
-loopImprimirFilas:
-    mov     qword[auxiliarFila],rcx
-    sub     rcx,rcx
-    mov     cx,word[columna]
-
-loopImprimirElementoCol:
-    mov     qword[auxiliarCol],rcx
-
-    mov     rax,qword[matrices+rbx]
-    mov     qword[elemento],rax
-
-    mov     rdi,msjElementoMatriz
-    mov     rsi,qword[elemento]
-    
-    sub rsp, 8
-	call printf
-	add rsp, 8
-
-    inc     qword[auxiliarImprimir]
-    imul    rbx,qword[auxiliarImprimir],8
-
-    mov     rcx,qword[auxiliarCol]
-    dec     rcx
-    jnz     loopImprimirElementoCol
-
-    mov     rdi,msjNewLine
-    call    puts
-
-    mov     rcx,qword[auxiliarFila]
-    dec     rcx
-    jnz     loopImprimirFilas
-
-    mov     rdi,msjNewLine
-    call    puts
-
-    mov     rcx,qword[auxiliarMatrices]
-    dec     rcx
-    jnz     imprimir
-
-ret
-
 menuDeOpciones:
     mov     rdi,msjOpciones
     call    puts
@@ -389,6 +329,12 @@ restaDeMatrices:
     call    gets
 
     call    validarCantMatricesRestar
+
+    mov     rdi,msjCualesMatricesRestar
+    call    puts
+
+    ;call    imprimirMatrices
+    
 ret
 
 validarCantMatricesRestar:
@@ -434,7 +380,66 @@ consultarValorDeMatriz:
 ret
     
 
+imprimirMatrices:
 
+	mov rax, 0
+	mov rdi, msjMostrarMatriz
+	sub rsp, 8
+	call printf
+	add rsp, 8
+
+    sub rbx,rbx
+    mov rbx,0
+
+    sub rcx,rcx
+    mov rcx,qword[cantMatrices]
+
+imprimir:
+    mov qword[auxiliarMatrices],rcx
+
+    sub rcx,rcx
+    mov cx,word[fila]
+
+loopImprimirFilas:
+    mov     qword[auxiliarFila],rcx
+    sub     rcx,rcx
+    mov     cx,word[columna]
+
+loopImprimirElementoCol:
+    mov     qword[auxiliarCol],rcx
+
+    mov     rax,qword[matrices+rbx]
+    mov     qword[elemento],rax
+
+    mov     rdi,msjElementoMatriz
+    mov     rsi,qword[elemento]
+    
+    sub rsp, 8
+	call printf
+	add rsp, 8
+
+    inc     qword[auxiliarImprimir]
+    imul    rbx,qword[auxiliarImprimir],8
+
+    mov     rcx,qword[auxiliarCol]
+    dec     rcx
+    jnz     loopImprimirElementoCol
+
+    mov     rdi,msjNewLine
+    call    puts
+
+    mov     rcx,qword[auxiliarFila]
+    dec     rcx
+    jnz     loopImprimirFilas
+
+    mov     rdi,msjNewLine
+    call    puts
+
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnz     imprimir
+
+ret
 
 ;--------------------------------------------------------
 ;           CheckAlign
