@@ -41,7 +41,8 @@ section .data
     msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
     msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
     msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
-        
+    matrizResta      times 64   dq  0
+    auxiliarResta               dq  0
 
 section .bss
     inputCantMatrices     resq    10
@@ -339,6 +340,7 @@ restaDeMatrices:
     ;call    imprimirMatrices
 
     mov     qword[posicionVector],0
+    mov     qword[indiceVector],0
 
     sub     rcx,rcx
     mov     rcx,qword[cantMatricesRestar]
@@ -354,9 +356,11 @@ ingresoMatricesARestar:
     dec     rcx
     jnle     ingresoMatricesARestar
 
+    sub     rcx,rcx
+    mov     cx,word[fila]
+    imul    cx,word[columna]
 resta:
-
-
+    mov     qword[auxiliarResta],rcx
 
 ret
 
@@ -384,8 +388,9 @@ validarNumMatRestar:
     mov     rdx,qword[numMatRestar]
     mov     rbx,qword[posicionVector]
     mov     qword[matricesRestar+rbx],rdx
-    inc     qword[posicionVector]
-    imul    rbx,qword[posicionVector],8
+    ;inc     qword[posicionVector]
+    inc     qword[indiceVector]
+    imul    rbx,qword[indiceVector],8
     mov     qword[posicionVector],rbx
 
     mov     byte[esValido],'S'
