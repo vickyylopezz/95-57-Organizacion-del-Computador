@@ -39,7 +39,7 @@ section .data
     msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
     msjCuantasMatrices          db  "Ingrese cuantas matrices que quiere restar",0
     msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
-    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente",0
+    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
     msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
         
 
@@ -338,8 +338,7 @@ restaDeMatrices:
 
     ;call    imprimirMatrices
 
-    sub     rbx,rbx
-    mov     rbx,0
+    mov     qword[posicionVector],0
 
     sub     rcx,rcx
     mov     rcx,qword[cantMatricesRestar]
@@ -354,6 +353,10 @@ ingresoMatricesARestar:
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
     jnle     ingresoMatricesARestar
+
+resta:
+
+
 
 ret
 
@@ -372,17 +375,19 @@ validarNumMatRestar:
     cmp     rax,1                   
     jl      numMatRestarInvalido
 
-    mov     rdx,qword[numMatRestar]
-    mov     qword[matricesRestar+rbx],rdx
-
     cmp     qword[numMatRestar],1    
     jl      numMatRestarInvalido    
     mov     rcx,qword[cantMatricesRestar]    
     cmp     qword[numMatRestar],rcx 
     jg      numMatRestarInvalido
 
-    inc     rbx
-    imul    rbx,8
+    mov     rdx,qword[numMatRestar]
+    mov     rbx,qword[posicionVector]
+    mov     qword[matricesRestar+rbx],rdx
+    inc     qword[posicionVector]
+    imul    rbx,qword[posicionVector],8
+    mov     qword[posicionVector],rbx
+
     mov     byte[esValido],'S'
 ret
 
