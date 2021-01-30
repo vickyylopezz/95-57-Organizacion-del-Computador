@@ -21,7 +21,7 @@ section .data
     auxiliarCol                 dq  0
     matrices         times 320 	dq  0
     formatoInputElemento        db  "%li",0
-    msjElementoInvalido         db  "Elemento ingresado invalido, debe ser un numero entre -99 y 99",10,0
+    msjElementoInvalido         db  "Elemento ingresado invalido, debe ser un numero entre -99 y 99, se pondra 0 en esa posicion",10,0
     posicionVector              dq  0
     msjElementoMatriz           dq  "  %li  ",0
     indiceVector                dq  1
@@ -39,8 +39,8 @@ section .data
     msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
     msjCuantasMatrices          db  "Ingrese cuantas matrices que quiere restar",0
     msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
-    msjCualesMatricesRestar     db  "Cuales de las siguiente matrices desea restar?",0
-
+    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente",0
+    msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
         
 
 section .bss
@@ -58,6 +58,9 @@ section .bss
     opcion                resq    1
     inputCantMatricesRestar resq    1
     cantMatricesRestar    resq    1
+    inputNumMatRestar     resq    1
+    matricesRestar      times 5 resq 1
+    numMatRestar          resq    1
 
 section .text
 main:
@@ -334,7 +337,60 @@ restaDeMatrices:
     call    puts
 
     ;call    imprimirMatrices
-    
+
+    sub     rbx,rbx
+    mov     rbx,0
+
+    sub     rcx,rcx
+    mov     rcx,qword[cantMatricesRestar]
+
+ingresoMatricesARestar:
+    mov     qword[auxiliarMatrices],rcx
+    mov     rdi,inputNumMatRestar
+    call    gets
+
+    call    validarNumMatRestar
+
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnle     ingresoMatricesARestar
+
+ret
+
+validarNumMatRestar:
+    mov     byte[esValido],'N'
+
+    mov     rdi,inputNumMatRestar 
+    mov     rsi,formatoInputNumero
+    mov     rdx,numMatRestar
+
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32               
+    cmp     rax,1                   
+    jl      numMatRestarInvalido
+
+    mov     rdx,qword[numMatRestar]
+    mov     qword[matricesRestar+rbx],rdx
+
+    cmp     qword[numMatRestar],1    
+    jl      numMatRestarInvalido    
+    mov     rcx,qword[cantMatricesRestar]    
+    cmp     qword[numMatRestar],rcx 
+    jg      numMatRestarInvalido
+
+    inc     rbx
+    imul    rbx,8
+    mov     byte[esValido],'S'
+ret
+
+numMatRestarInvalido:
+    mov     rdi,msjNumeroDeMatrizInvalido
+    call    puts
+    ;jmp     ingresoMatricesARestar
+    ;call     restaDeMatrices
 ret
 
 validarCantMatricesRestar:
@@ -348,7 +404,8 @@ validarCantMatricesRestar:
     sub     rsp,[plusRsp]
 
     call    sscanf  
-    add		rsp,[plusRsp]   ;add rsp,32               
+    add		rsp,[plusRsp]   ;add rsp,32  
+
     cmp     rax,1                   
     jl      cantMatricesRestarInvalido
 
@@ -379,7 +436,6 @@ ret
 consultarValorDeMatriz:
 ret
     
-
 imprimirMatrices:
 
 	mov rax, 0
