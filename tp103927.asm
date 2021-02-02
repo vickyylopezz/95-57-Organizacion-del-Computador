@@ -43,6 +43,8 @@ section .data
     msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
     matrizResta      times 64   dq  0
     auxiliarResta               dq  0
+    indiceRestar                dq  0
+    posicionRestar              dq  0
 
 section .bss
     inputCantMatrices     resq    10
@@ -356,11 +358,48 @@ ingresoMatricesARestar:
     dec     rcx
     jnle     ingresoMatricesARestar
 
+calculoDesplazamientoPrimerMatriz:
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
     sub     rcx,rcx
-    mov     cx,word[fila]
-    imul    cx,word[columna]
-resta:
+    mov     rcx,rbx
     mov     qword[auxiliarResta],rcx
+
+    mov     rax,qword[matricesRestar]
+    dec     rax
+    imul    rbx,rax
+    mov     qword[indiceVector],rbx
+    imul    rbx,rbx,8
+    mov     qword[posicionVector],rbx
+    mov     qword[posicionRestar],0
+    mov     qword[indiceRestar],0
+
+    
+guardarMatriz:
+    sub     rax,rax
+    mov     rbx,qword[posicionVector]
+    mov     rax,qword[matrices+rbx]
+    sub     rbx,rbx
+    mov     rbx,qword[posicionRestar]
+    mov     qword[matrizResta+rbx],rax
+
+    inc     qword[indiceVector]
+    mov     rbx,qword[indiceVector]
+    imul    rbx,rbx,8
+    mov     qword[posicionVector],rbx
+    inc     qword[indiceRestar]
+    mov     rbx,qword[indiceRestar]
+    imul    rbx,rbx,8
+    mov     qword[posicionRestar],rbx
+
+    mov     rcx,qword[auxiliarResta]
+    dec     rcx
+    mov     qword[auxiliarResta],rcx
+    jnz     guardarMatriz
+
+;resta:
+;    mov     qword[auxiliarResta],rcx
 
 ret
 
