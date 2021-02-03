@@ -45,6 +45,8 @@ section .data
     auxiliarResta               dq  0
     indiceRestar                dq  0
     posicionRestar              dq  0
+    matrizARestar               dq  0
+    msjResultadoResta           db  "Resultado de la resta: ",10,0
 
 section .bss
     inputCantMatrices     resq    10
@@ -398,8 +400,101 @@ guardarMatriz:
     mov     qword[auxiliarResta],rcx
     jnz     guardarMatriz
 
-;resta:
-;    mov     qword[auxiliarResta],rcx
+    mov     qword[indiceMatriz],1
+    
+    sub     rcx,rcx
+    mov     rcx,qword[cantMatricesRestar]
+    dec     rcx
+matrizRestar:
+    mov     qword[auxiliarMatrices],rcx
+
+    sub     rbx,rbx
+    mov     rbx,qword[indiceMatriz]
+    imul    rbx,rbx,8
+    mov     rax,qword[matricesRestar+rbx]
+    mov     qword[matrizARestar],rax
+
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    dec     qword[matrizARestar]
+    imul    rbx,qword[matrizARestar]
+    mov     qword[indiceRestar],rbx
+
+    mov     qword[indiceVector],0
+
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    mov     rcx,rbx
+
+resta:
+    mov     qword[auxiliarResta],rcx
+
+    mov     rbx,qword[indiceRestar]
+    imul    rbx,rbx,8
+    mov     qword[posicionRestar],rbx
+
+    mov     rax,qword[matrices+rbx]
+
+    mov     rbx,qword[indiceVector]
+    imul    rbx,rbx,8
+    mov     qword[posicionVector],rbx
+
+    sub     qword[matrizResta+rbx],rax
+
+    inc     qword[indiceVector]
+    inc     qword[indiceRestar]
+    mov     rcx,qword[auxiliarResta]
+    dec     rcx
+    jnz     resta
+    
+    inc     qword[indiceMatriz]
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnz     matrizRestar
+
+imprimirMatrizResta:
+    mov     qword[auxiliarImprimir],0
+    mov     rbx,0
+    
+    mov     rdi,msjResultadoResta
+    call    puts
+
+    sub rcx,rcx
+    mov cx,word[fila]
+
+loopImprimirFil:
+    mov     qword[auxiliarFila],rcx
+    sub     rcx,rcx
+    mov     cx,word[columna]
+
+loopImprimirElemCol:
+    mov     qword[auxiliarCol],rcx
+
+    mov     rax,qword[matrizResta+rbx]
+    mov     qword[elemento],rax
+
+    mov     rdi,msjElementoMatriz
+    mov     rsi,qword[elemento]
+    
+    sub rsp, 8
+	call printf
+	add rsp, 8
+
+    inc     qword[auxiliarImprimir]
+    imul    rbx,qword[auxiliarImprimir],8
+
+    mov     rcx,qword[auxiliarCol]
+    dec     rcx
+    jnz     loopImprimirElemCol
+
+    mov     rdi,msjNewLine
+    call    puts
+
+    mov     rcx,qword[auxiliarFila]
+    dec     rcx
+    jnz     loopImprimirFil
 
 ret
 
@@ -486,7 +581,7 @@ consultarValorDeMatriz:
 ret
     
 imprimirMatrices:
-
+    mov qword[auxiliarImprimir],0
 	mov rax, 0
 	mov rdi, msjMostrarMatriz
 	sub rsp, 8
