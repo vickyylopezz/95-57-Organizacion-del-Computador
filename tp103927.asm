@@ -78,7 +78,6 @@ section .bss
     inputNumMatRestar     resq    1
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
-    ;matricesIguales       resb    1
     inputMatriz1          resq    1
     inputMatriz2          resq    1
 
@@ -231,12 +230,6 @@ msjColumna:
     jnz     mensajeFila
 
     mov     qword[indiceFila],1
-;--------- para que en el vector se guarden separadas las matrices y no todas juntas (no se si anda)
-    ;sub     rbx,rbx
-    ;mov     qword[indiceVector],64
-    ;mov     rbx,qword[indiceMatriz]
-    ;imul    rbx,qword[indiceVector]
-;------------------------------
     inc     qword[indiceMatriz]
     pop     rcx
     dec     rcx
@@ -537,7 +530,6 @@ validarNumMatRestar:
     mov     rdx,qword[numMatRestar]
     mov     rbx,qword[posicionVector]
     mov     qword[matricesRestar+rbx],rdx
-    ;inc     qword[posicionVector]
     inc     qword[indiceVector]
     imul    rbx,qword[indiceVector],8
     mov     qword[posicionVector],rbx
@@ -596,7 +588,6 @@ igualdadDeMatrices:
     call    validarNumMatrices
 
 igualarMatrices:
-    ;mov     byte[matricesIguales],'N'
 
     sub     rbx,rbx
     mov     bx,word[fila]
