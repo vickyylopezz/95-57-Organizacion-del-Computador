@@ -11,7 +11,7 @@ section .data
     formatoInputNumero          db  "%li",0
     msjIngCantMatricesInvalido  db  "La cantidad de matrices debe ser de 2 a 5",0
     msjIngCantFilCol            db  "Ingrese la cantidad de filas y columnas que tendran las matrices, separados por un espacio",0
-    formatoInputFilCol          db  "%hi %hi",0
+    formatoInputDosElementos    db  "%hi %hi",0
     msjIngCantFilColInvalido    db  "La fila y columna debe ser un numero entre [1..8]",0
     indiceMatriz                dq  1
     indiceFila                  dq  1
@@ -47,13 +47,19 @@ section .data
     posicionRestar              dq  0
     matrizARestar               dq  0
     msjResultadoResta           db  "Resultado de la resta: ",10,0
+    msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
+    msjIngMatricesIgualarInvalido   db  "Numeros de matrices invalido",0
+    matriz1                     dq  0   
+    matriz2                     dq  0
+    indiceMatriz1               dq  0
+    indiceMatriz2               dq  0
 
 section .bss
     inputCantMatrices     resq    10
     esValido              resb    1
     cantMatrices          resq    1
     plusRsp		          resq	  1
-    inputCantFilCol       resb    50
+    inputDosElementos     resb    50
     fila                  resw    1   
     columna               resw    1
     inputElemento         resq    1
@@ -66,6 +72,9 @@ section .bss
     inputNumMatRestar     resq    1
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
+    matricesIguales       resb    1
+    inputMatriz1          resq    1
+    inputMatriz2          resq    1
 
 section .text
 main:
@@ -125,14 +134,14 @@ ingresoCantFilCol:
     mov     rdi,msjIngCantFilCol
     call    puts
 
-    mov     rdi,inputCantFilCol
+    mov     rdi,inputDosElementos
     call    gets
 
 validarFilCol:
     mov     byte[esValido],'N'   
 
-    mov     rdi,inputCantFilCol         
-    mov     rsi,formatoInputFilCol   
+    mov     rdi,inputDosElementos         
+    mov     rsi,formatoInputDosElementos  
     mov     rdx,fila                
     mov     rcx,columna             
     call    checkAlign
@@ -569,6 +578,86 @@ cantMatricesRestarInvalido:
 ret
 
 igualdadDeMatrices:
+    mov     rdi,msjCualesMatricesIgualar
+    call    puts
+
+    mov     rdi,inputMatriz1
+    call    gets
+
+    mov     rdi,inputMatriz2
+    call    gets
+
+    call    validarNumMatrices
+
+igualarMatrices:
+    mov     byte[matricesIguales],'N'
+
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    dec     qword[matriz1]
+    imul    rbx,qword[matriz1]
+    mov     qword[indiceMatriz1],rbx
+
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    dec     word[matriz2]
+    imul    rbx,qword[matriz2]
+    mov     qword[indiceMatriz2],rbx
+
+igualar:
+    
+ret
+
+validarNumMatrices:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputMatriz1         
+    mov     rsi,formatoInputElemento
+    mov     rdx,matriz1                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      matricesInvalidas
+
+    mov     rdi,inputMatriz2         
+    mov     rsi,formatoInputElemento
+    mov     rdx,matriz2                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      matricesInvalidas  
+
+    cmp     qword[matriz1],1    
+    jl      matricesInvalidas 
+    mov     rcx,qword[cantMatrices]       
+    cmp     qword[matriz1],rcx  
+    jg      matricesInvalidas        
+
+    cmp     qword[matriz2],1 
+    jl      matricesInvalidas  
+    mov     rcx,qword[cantMatrices]      
+    cmp     qword[matriz2],rcx 
+    jg      matricesInvalidas        
+
+    mov     byte[esValido],'S'
+    ret
+
+matricesInvalidas:
+    mov     rdi,msjIngMatricesIgualarInvalido
+    call    puts
+    jmp     igualdadDeMatrices
+ret
+
+
+
 ret
 
 matrizPorEscalar:
@@ -592,7 +681,7 @@ imprimirMatrices:
     mov rbx,0
 
     sub rcx,rcx
-    mov rcx,qword[cantMatrices]
+    mov rcx,qword[cantMatrices]   
 
 imprimir:
     mov qword[auxiliarMatrices],rcx
