@@ -53,6 +53,12 @@ section .data
     matriz2                     dq  0
     indiceMatriz1               dq  0
     indiceMatriz2               dq  0
+    posicionMatriz1             dq  0
+    elemento1                   dq  0
+    posicionMatriz2             dq  0
+    elemento2                   dq  0
+    msjMatricesDistintas        db  "Las matrices son distintas",0
+    msjMatricesIguales          db  "Las matrices son iguales",0
 
 section .bss
     inputCantMatrices     resq    10
@@ -72,7 +78,7 @@ section .bss
     inputNumMatRestar     resq    1
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
-    matricesIguales       resb    1
+    ;matricesIguales       resb    1
     inputMatriz1          resq    1
     inputMatriz2          resq    1
 
@@ -590,7 +596,7 @@ igualdadDeMatrices:
     call    validarNumMatrices
 
 igualarMatrices:
-    mov     byte[matricesIguales],'N'
+    ;mov     byte[matricesIguales],'N'
 
     sub     rbx,rbx
     mov     bx,word[fila]
@@ -602,14 +608,49 @@ igualarMatrices:
     sub     rbx,rbx
     mov     bx,word[fila]
     imul    bx,word[columna]
+    mov     rcx,rbx
     dec     word[matriz2]
     imul    rbx,qword[matriz2]
     mov     qword[indiceMatriz2],rbx
 
 igualar:
-    
+    mov     qword[auxiliarMatrices],rcx
+    mov     rbx,qword[indiceMatriz1]
+    imul    rbx,rbx,8
+    mov     qword[posicionMatriz1],rbx
+
+    mov     rax,qword[matrices+rbx]
+    mov     qword[elemento1],rax
+
+    mov     rbx,qword[indiceMatriz2]
+    imul    rbx,rbx,8
+    mov     qword[posicionMatriz2],rbx
+
+    mov     rax,qword[matrices+rbx]
+    mov     qword[elemento2],rax
+
+    cmp     qword[elemento1],rax
+    jne     matricesDistintas
+    inc     qword[indiceMatriz1]
+    inc     qword[indiceMatriz2]
+
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnz     igualar
+
+    jmp     matricesIguales
+
 ret
 
+matricesIguales:
+    mov     rdi,msjMatricesIguales
+    call    puts
+ret
+
+matricesDistintas:
+    mov     rdi,msjMatricesDistintas
+    call    puts
+ret
 validarNumMatrices:
     mov     byte[esValido],'N'   
 
