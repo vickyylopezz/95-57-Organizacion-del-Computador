@@ -59,6 +59,16 @@ section .data
     elemento2                   dq  0
     msjMatricesDistintas        db  "Las matrices son distintas",0
     msjMatricesIguales          db  "Las matrices son iguales",0
+    msjIngMatrizPorEscalar      db  "Ingrese el numero de matriz que desea multiplicar por escalar",0
+    matrizAMultiplicar          dq  0
+    msjIngMatricesXEscInvalida  db  "Numero de matriz invalido",0
+    msjIngEscalar               db  "Ingrese el escalar para multiplicar por la matriz",0
+    escalar                     dq  0
+    msjEscalarInvalido          db  "Escalar invalido",0
+    indiceMultiplicar           dq  0
+    posicionMultiplicar         dq  0
+    matrizMultiplicar   times 64 dq 0
+    msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
 
 section .bss
     inputCantMatrices     resq    10
@@ -80,6 +90,8 @@ section .bss
     numMatRestar          resq    1
     inputMatriz1          resq    1
     inputMatriz2          resq    1
+    inputNumMatrizXEscalar  resq  1
+    inputEscalar          resq    1
 
 section .text
 main:
@@ -642,6 +654,7 @@ matricesDistintas:
     mov     rdi,msjMatricesDistintas
     call    puts
 ret
+
 validarNumMatrices:
     mov     byte[esValido],'N'   
 
@@ -680,7 +693,7 @@ validarNumMatrices:
     jg      matricesInvalidas        
 
     mov     byte[esValido],'S'
-    ret
+ret
 
 matricesInvalidas:
     mov     rdi,msjIngMatricesIgualarInvalido
@@ -688,11 +701,158 @@ matricesInvalidas:
     jmp     igualdadDeMatrices
 ret
 
+matrizPorEscalar:
+    
+    call    ingresoNumMatrizPorEscalar
 
+    call    ingresarEscalar
+
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    mov     rcx,rbx
+    dec     qword[matrizAMultiplicar]
+    imul    rbx,qword[matrizAMultiplicar]
+    mov     qword[indiceVector],rbx
+
+    mov     qword[indiceMultiplicar],0
+
+multiplicarMatriz:
+    mov     qword[auxiliarMatrices],rcx
+
+    mov     rbx,qword[indiceVector]
+    imul    rbx,rbx,8
+    mov     qword[posicionVector],rbx
+
+    mov     rax,qword[matrices+rbx]
+    imul    rax,qword[escalar]
+
+    mov     rbx,qword[indiceMultiplicar]
+    imul    rbx,rbx,8
+    mov     qword[posicionMultiplicar],rbx
+
+    mov     qword[matrizMultiplicar+rbx],rax
+
+    inc     qword[indiceMultiplicar]
+    inc     qword[indiceVector]
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnz     multiplicarMatriz
+
+imprimirMatrizMultiplicar:
+    mov     qword[auxiliarImprimir],0
+    mov     rbx,0
+    
+    mov     rdi,msjResultadoMultiplicar
+    call    puts
+
+    sub rcx,rcx
+    mov cx,word[fila]
+
+loopImprimirFilMultiplicar:
+    mov     qword[auxiliarFila],rcx
+    sub     rcx,rcx
+    mov     cx,word[columna]
+
+loopImprimirElemColMultiplicar:
+    mov     qword[auxiliarCol],rcx
+
+    mov     rax,qword[matrizMultiplicar+rbx]
+    mov     qword[elemento],rax
+
+    mov     rdi,msjElementoMatriz
+    mov     rsi,qword[elemento]
+    
+    sub rsp, 8
+	call printf
+	add rsp, 8
+
+    inc     qword[auxiliarImprimir]
+    imul    rbx,qword[auxiliarImprimir],8
+
+    mov     rcx,qword[auxiliarCol]
+    dec     rcx
+    jnz     loopImprimirElemColMultiplicar
+
+    mov     rdi,msjNewLine
+    call    puts
+
+    mov     rcx,qword[auxiliarFila]
+    dec     rcx
+    jnz     loopImprimirFilMultiplicar
+
+ret 
+
+ingresarEscalar:
+
+    mov     rdi,msjIngEscalar
+    call    puts
+
+    mov     rdi,inputEscalar
+    call    gets
+
+    call    validarEscalar
 
 ret
 
-matrizPorEscalar:
+ingresoNumMatrizPorEscalar:
+
+    mov     rdi,msjIngMatrizPorEscalar
+    call    puts
+
+    mov     rdi,inputNumMatrizXEscalar
+    call    gets
+
+    call    validarNumMatrizXEscalar
+ret
+validarEscalar:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputEscalar      
+    mov     rsi,formatoInputElemento
+    mov     rdx,escalar                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      escalarInvalido
+ret
+
+escalarInvalido:
+    mov     rdi,msjEscalarInvalido
+    call    puts
+    jmp     ingresarEscalar
+ret
+
+validarNumMatrizXEscalar:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputNumMatrizXEscalar       
+    mov     rsi,formatoInputElemento
+    mov     rdx,matrizAMultiplicar                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      matrizInvalida
+
+    cmp     qword[matrizAMultiplicar],1    
+    jl      matrizInvalida
+    mov     rcx,qword[cantMatrices]       
+    cmp     qword[matrizAMultiplicar],rcx  
+    jg      matrizInvalida             
+
+    mov     byte[esValido],'S'
+ret
+
+matrizInvalida:
+    mov     rdi,msjIngMatricesXEscInvalida
+    call    puts
+    jmp     ingresoNumMatrizPorEscalar
 ret
 
 modificiarValorDeMatriz:
