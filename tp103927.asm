@@ -69,6 +69,17 @@ section .data
     posicionMultiplicar         dq  0
     matrizMultiplicar   times 64 dq 0
     msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
+    msjIngNumMatrizElemenMod    db  "Ingrese el numero de matriz que desea modificar",0
+    matrizAModificar            dq  0
+    msjIngMatricesModificarInvalida db  "Numero de matriz invalido",0
+    msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)"
+    filaModificar               dw  0
+    columnaModificar            dw  0
+    msjIngFilColModificarInvalido   db  "Fila y columna ingresadas invalido",0
+    elementoModificado          dq  0
+    msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna",0
+    msjElementoModificadoInvalido   dq  "Numero invalido, debe ser un numero entre -99 y 99",0
+
 
 section .bss
     inputCantMatrices     resq    10
@@ -92,6 +103,9 @@ section .bss
     inputMatriz2          resq    1
     inputNumMatrizXEscalar  resq  1
     inputEscalar          resq    1
+    inputNumMatrizModificar resq    50
+    inputFilColMatrizModificar  resw    50
+    inputElementoModificado resq    1
 
 section .text
 main:
@@ -856,6 +870,159 @@ matrizInvalida:
 ret
 
 modificiarValorDeMatriz:
+    
+    call    ingresarMatrizElementoModificar
+
+    call    ingresarFilColElementoModificar
+
+    call    ingresarElemento
+
+modificarValor:
+    sub     rbx,rbx
+    mov     bx,word[fila]
+    imul    bx,word[columna]
+    dec     qword[matrizAModificar]
+    imul    rbx,qword[matrizAModificar]
+    mov     qword[indiceVector],rbx
+
+    dec     word[filaModificar]
+    dec     word[columnaModificar]
+    sub     rbx,rbx
+    mov     bx,word[filaModificar]
+    imul    rbx,rbx,2
+    add     bx,word[columnaModificar]
+    add     qword[indiceVector],rbx
+    
+    mov     rbx,qword[indiceVector]
+    imul    rbx,rbx,8
+    mov     rax,qword[elementoModificado]
+    mov     qword[matrices+rbx],rax
+
+ret
+
+ingresarElemento:
+    mov     rdi,msjIngElemento
+    call    puts
+
+    mov     rdi,inputElementoModificado
+    call    gets
+
+    call    validarElementoModificado
+
+ret
+
+validarElementoModificado:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputElementoModificado    
+    mov     rsi,formatoInputElemento
+    mov     rdx,elementoModificado                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      elementoModificadoInvalido  
+
+    cmp     qword[elementoModificado],-99    
+    jl      elementoModificadoInvalido
+    cmp     qword[matrizAModificar],99  
+    jg      elementoModificadoInvalido           
+
+    mov     byte[esValido],'S'
+ret
+
+elementoModificadoInvalido:
+    mov     rdi,msjElementoModificadoInvalido
+    call    puts
+    jmp     ingresarElemento
+ret
+
+ingresarMatrizElementoModificar:
+    mov     rdi,msjIngNumMatrizElemenMod
+    call    puts
+
+    mov     rdi,inputNumMatrizModificar
+    call    gets
+
+    call    validarNumMatrizModificar
+
+ret
+
+validarNumMatrizModificar:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputNumMatrizModificar    
+    mov     rsi,formatoInputElemento
+    mov     rdx,matrizAModificar                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      matrizInvalidaModificar
+
+    cmp     qword[matrizAModificar],1    
+    jl      matrizInvalidaModificar
+    mov     rcx,qword[cantMatrices]       
+    cmp     qword[matrizAModificar],rcx  
+    jg      matrizInvalidaModificar             
+
+    mov     byte[esValido],'S'
+ret
+
+matrizInvalidaModificar:
+    mov     rdi,msjIngMatricesModificarInvalida
+    call    puts
+    jmp     ingresoNumMatrizPorEscalar
+ret
+
+ingresarFilColElementoModificar:
+    mov     rdi,msjIngFilColModificar
+    call    puts
+
+    mov     rdi,inputFilColMatrizModificar
+    call    gets
+
+    call    validarFilColMatrizModificar
+ret
+
+validarFilColMatrizModificar:
+    mov     byte[esValido],'N'   
+
+    mov     rdi,inputFilColMatrizModificar         
+    mov     rsi,formatoInputDosElementos  
+    mov     rdx,filaModificar                
+    mov     rcx,columnaModificar             
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,2                   
+    jl      filColModificarInvalido
+
+    cmp     word[filaModificar],1    
+    jl      filColModificarInvalido  
+    mov     bx,word[fila]
+    cmp     word[filaModificar],bx   
+    jg      filColModificarInvalido        
+
+    cmp     word[columnaModificar],1 
+    jl      filColModificarInvalido  
+    mov     bx,word[columna]      
+    cmp     word[columnaModificar],bx
+    jg      filColModificarInvalido        
+
+    mov     byte[esValido],'S'
+    ret
+
+filColModificarInvalido:
+    mov     rdi,msjIngFilColModificarInvalido
+    call    puts
+    jmp     ingresarFilColElementoModificar
 ret
 
 consultarValorDeMatriz:
