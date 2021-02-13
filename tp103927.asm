@@ -7,44 +7,33 @@ extern printf
 section .data
 ;Mensajes
     msjIngMatriz                db  "De la matriz %li",10,0
-    msjIngMatrizFil             db  "ingrese el elemento en la fila %li columna %li",10,0
-    msjIngCantMatrices          db  "Ingrese la cantidad de matrices con las que va a operar",0
-    msjIngCantMatricesInvalido  db  "La cantidad de matrices debe ser de 2 a 5",0
-    msjIngCantFilCol            db  "Ingrese la cantidad de filas y columnas que tendran las matrices, separados por un espacio",0
-    msjIngCantFilColInvalido    db  "La fila y columna debe ser un numero entre [1..8]",0
-    msjElementoInvalido         db  "Elemento ingresado invalido, debe ser un numero entre -99 y 99, se pondra 0 en esa posicion",10,0
+    msjIngMatrizFil             db  "ingrese el elemento en la fila %li columna %li, debe ser un numero entre -99 y 99",10,0
+    msjIngCantMatrices          db  "Ingrese la cantidad de matrices con las que va a operar, debe ser un numero entre 2 y 5",0
+    msjIngCantFilCol            db  "Ingrese la cantidad de filas y columnas que tendran las matrices, separados por un espacio, deben ser ambos numeros entre 1 y 8",0
     msjElementoMatriz           dq  "  %li  ",0
     msjMostrarMatriz            db  "Matrices:",10,0
     msjNewLine                  dw  " ",10,0
-    msjOpciones                 db  "Ingrese...",0
-    msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
     msjCuantasMatrices          db  "Ingrese cuantas matrices quiere restar",0
-    msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
     msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
-    msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
     msjResultadoResta           db  "Resultado de la resta: ",10,0
     msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
-    msjIngMatricesIgualarInvalido   db  "Numeros de matrices invalido",0
     msjMatricesDistintas        db  "Las matrices son distintas",0
     msjMatricesIguales          db  "Las matrices son iguales",0
     msjIngMatrizPorEscalar      db  "Ingrese el numero de matriz que desea multiplicar por escalar",0
-    msjIngMatricesXEscInvalida  db  "Numero de matriz invalido",0
     msjIngEscalar               db  "Ingrese el escalar para multiplicar por la matriz",0
-    msjEscalarInvalido          db  "Escalar invalido",0
     msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
     msjIngNumMatrizElemenMod    db  "Ingrese el numero de matriz que desea modificar",0
-    msjIngMatricesModificarInvalida db  "Numero de matriz invalido",0
     msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)"
-    msjIngFilColModificarInvalido   db  "Fila y columna ingresadas invalido",0
-    msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna",0
-    msjElementoModificadoInvalido   dq  "Numero invalido, debe ser un numero entre -99 y 99",0
+    msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna, debe ser un numero entre -99 y 99",0
     msjIngNumMatrizElemenCon    db  "Ingrese el numero de la matriz que quiere consultar el elemento",0
-    msjIngMatricesConsultarInvalida db  "Numero de matriz invalido",0
     msjIngFilColConsultar       db  "Ingrese la fila y la columna del elemento que desea consultar (separadas por un espacio)"
-    msjIngFilColConsultarInvalido   db  "Fila y columna ingresadas invalido",0
     msjElementoConsultado       db  "El elemento en esa posicion es: %li",10,0
-    
+
+;Mensajes Invalidos
+    msjNumeroInvalido           db  "Numero ingresado invalido",0
+
 ;Opciones menu
+    msjOpciones                 db  "Ingrese...",0
     opcionUno                   db  "1 para hacer resta de 2 o más matrices",0
     opcionDos                   db  "2 para ver si dos matrices son iguales",0
     opcionTres                  db  "3 para multiplicar una matriz por un valor escalar leído desde teclado",0
@@ -52,7 +41,6 @@ section .data
     opcionCinco                 db  "5 para consultar el valor de un elemento de una matriz",0
 
 ;Formato
-    formatoInputNumero          db  "%li",0
     formatoInputDosElementos    db  "%hi %hi",0
     formatoInputElemento        db  "%li",0
 
@@ -146,7 +134,7 @@ ingresoCantMatrices:
 
 validarCantMatrices:
     mov     rdi,inputCantMatrices 
-    mov     rsi,formatoInputNumero
+    mov     rsi,formatoInputElemento
     mov     rdx,cantMatrices
 
     call    checkAlign
@@ -164,7 +152,7 @@ validarCantMatrices:
 ret
 
 cantMatricesInvalido:
-    mov     rdi,msjIngCantMatricesInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresoCantMatrices
 ret   
@@ -202,7 +190,7 @@ validarFilCol:
     ret
 
 filColInvalido:
-    mov     rdi,msjIngCantFilColInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresoCantFilCol
 ret
@@ -287,7 +275,7 @@ validarElemento:
 ret
 
 elementoInvalido:
-    mov     rdi,msjElementoInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     imprimirMsj
 ret
@@ -333,7 +321,7 @@ ret
 
 validarOpcion:
     mov     rdi,inputOpcion 
-    mov     rsi,formatoInputNumero
+    mov     rsi,formatoInputElemento
     mov     rdx,opcion
 
     call    checkAlign
@@ -351,7 +339,7 @@ validarOpcion:
 ret
 
 opcionInvalida:
-    mov     rdi,msjOpcionInvalida
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     mostrarMenu
 ret
@@ -533,7 +521,7 @@ ret
 
 validarNumMatRestar:
     mov     rdi,inputNumMatRestar 
-    mov     rsi,formatoInputNumero
+    mov     rsi,formatoInputElemento
     mov     rdx,numMatRestar
 
     call    checkAlign
@@ -559,14 +547,14 @@ validarNumMatRestar:
 ret
 
 numMatRestarInvalido:
-    mov     rdi,msjNumeroDeMatrizInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     mostrarMsjCualesMatricesRestar
 ret
 
 validarCantMatricesRestar:
     mov     rdi,inputCantMatricesRestar 
-    mov     rsi,formatoInputNumero
+    mov     rsi,formatoInputElemento
     mov     rdx,cantMatricesRestar
 
     call    checkAlign
@@ -586,7 +574,7 @@ validarCantMatricesRestar:
 ret
 
 cantMatricesRestarInvalido:
-    mov     rdi,msjIngCantMatricesRestarInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     mostarMsjCuantasMatricesRestar
 ret
@@ -696,7 +684,7 @@ ingresarSegundaMatrizIgualar:
 ret
 
 matricesInvalidas:
-    mov     rdi,msjIngMatricesIgualarInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarNumMatricesIgualar
 ret
@@ -815,7 +803,7 @@ validarEscalar:
 ret
 
 escalarInvalido:
-    mov     rdi,msjEscalarInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarEscalar
 ret
@@ -840,7 +828,7 @@ validarNumMatrizXEscalar:
 ret
 
 matrizInvalida:
-    mov     rdi,msjIngMatricesXEscInvalida
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresoNumMatrizPorEscalar
 ret
@@ -903,7 +891,7 @@ validarElementoModificado:
 ret
 
 elementoModificadoInvalido:
-    mov     rdi,msjElementoModificadoInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarElemento
 ret
@@ -938,7 +926,7 @@ validarNumMatrizModificar:
 ret
 
 matrizInvalidaModificar:
-    mov     rdi,msjIngMatricesModificarInvalida
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarMatrizElementoModificar
 ret
@@ -981,7 +969,7 @@ validarFilColMatrizModificar:
 ret
 
 filColModificarInvalido:
-    mov     rdi,msjIngFilColModificarInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarFilColElementoModificar
 ret
@@ -1055,7 +1043,7 @@ validarFilColMatrizConsultar:
 ret
 
 filColConsultarInvalido:
-    mov     rdi,msjIngFilColConsultarInvalido
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarFilColElementoConsultar
 ret
@@ -1090,7 +1078,7 @@ validarNumMatrizConsultar:
 ret
 
 matrizInvalidaConsultar:
-    mov     rdi,msjIngMatricesConsultarInvalida
+    mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarMatrizElementoConsultar
 ret
