@@ -15,7 +15,7 @@ section .data
     msjNewLine                  dw  " ",10,0
     msjCuantasMatrices          db  "Ingrese cuantas matrices quiere restar",0
     msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
-    msjResultadoResta           db  "Resultado de la resta: ",10,0
+    msjResultadoResta           db  "Resultado de la resta: ",0
     msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
     msjMatricesDistintas        db  "Las matrices son distintas",0
     msjMatricesIguales          db  "Las matrices son iguales",0
@@ -45,12 +45,10 @@ section .data
     formatoInputElemento        db  "%li",0
 
 ;Indices y posiciones
-    indiceMatriz                dq  1
+    indice                      dq  1
     indiceFila                  dq  1
     indiceCol                   dq  1
     indiceVector                dq  1
-    indiceImprimir              dq  0
-    indiceRestar                dq  0
     indiceMatriz1               dq  0
     indiceMatriz2               dq  0
     indiceMultiplicar           dq  0
@@ -203,7 +201,7 @@ mensajeIngMatrices:
     push    rcx
 
     mov     rdi,msjIngMatriz
-    mov     rsi,qword[indiceMatriz]
+    mov     rsi,qword[indice]
     call    printf
 
     sub     rcx,rcx             
@@ -268,7 +266,7 @@ validarElemento:
     jnz     mensajeFila
 
     mov     qword[indiceFila],1
-    inc     qword[indiceMatriz]
+    inc     qword[indice]
     pop     rcx
     dec     rcx
     jnz     mensajeIngMatrices
@@ -364,7 +362,7 @@ calculoDesplazamientoPrimerMatriz:
     imul    rbx,rbx,8
     mov     qword[posicionVector],rbx
     mov     qword[posicionRestar],0
-    mov     qword[indiceRestar],0
+    mov     qword[indiceFila],0
 
     
 guardarMatriz:
@@ -379,8 +377,8 @@ guardarMatriz:
     mov     rbx,qword[indiceVector]
     imul    rbx,rbx,8
     mov     qword[posicionVector],rbx
-    inc     qword[indiceRestar]
-    mov     rbx,qword[indiceRestar]
+    inc     qword[indiceFila]
+    mov     rbx,qword[indiceFila]
     imul    rbx,rbx,8
     mov     qword[posicionRestar],rbx
 
@@ -389,7 +387,7 @@ guardarMatriz:
     mov     qword[auxiliar],rcx
     jnz     guardarMatriz
 
-    mov     qword[indiceMatriz],1
+    mov     qword[indice],1
     
     sub     rcx,rcx
     mov     rcx,qword[cantMatricesRestar]
@@ -399,7 +397,7 @@ matrizRestar:
     mov     qword[auxiliarMatrices],rcx
 
     sub     rbx,rbx
-    mov     rbx,qword[indiceMatriz]
+    mov     rbx,qword[indice]
     imul    rbx,rbx,8
     mov     rax,qword[matricesRestar+rbx]
     mov     qword[matrizARestar],rax
@@ -409,7 +407,7 @@ matrizRestar:
     imul    bx,word[columna]
     dec     qword[matrizARestar]
     imul    rbx,qword[matrizARestar]
-    mov     qword[indiceRestar],rbx
+    mov     qword[indiceFila],rbx
 
     mov     qword[indiceVector],0
 
@@ -421,7 +419,7 @@ matrizRestar:
 resta:
     mov     qword[auxiliar],rcx
 
-    mov     rbx,qword[indiceRestar]
+    mov     rbx,qword[indiceFila]
     imul    rbx,rbx,8
     mov     qword[posicionRestar],rbx
 
@@ -434,12 +432,12 @@ resta:
     sub     qword[matrizResta+rbx],rax
 
     inc     qword[indiceVector]
-    inc     qword[indiceRestar]
+    inc     qword[indiceFila]
     mov     rcx,qword[auxiliar]
     dec     rcx
     jnz     resta
     
-    inc     qword[indiceMatriz]
+    inc     qword[indice]
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
     jnz     matrizRestar
