@@ -150,7 +150,6 @@ validarCantMatrices:
     jl      cantMatricesInvalido        
     cmp     qword[cantMatrices],5    
     jg      cantMatricesInvalido
-
 ret
 
 cantMatricesInvalido:
@@ -274,7 +273,6 @@ validarElemento:
     pop     rcx
     dec     rcx
     jnz     mensajeIngMatrices
-
 ret
 
 elementoInvalido:
@@ -284,7 +282,6 @@ elementoInvalido:
 ret
 
 menuDeOpciones:
-
     call    mostrarMenu
 
     cmp     qword[opcion],1                   
@@ -301,7 +298,6 @@ menuDeOpciones:
 
     cmp     qword[opcion],5
     je      consultarValorDeMatriz
-
 ret
 
 mostrarMenu:
@@ -341,7 +337,6 @@ validarOpcion:
     jl      opcionInvalida        
     cmp     qword[opcion],5    
     jg      opcionInvalida
-
 ret
 
 opcionInvalida:
@@ -400,6 +395,7 @@ guardarMatriz:
     sub     rcx,rcx
     mov     rcx,qword[cantMatricesRestar]
     dec     rcx
+
 matrizRestar:
     mov     qword[auxiliarMatrices],rcx
 
@@ -490,7 +486,6 @@ loopImprimirElemCol:
     mov     rcx,qword[auxiliarFila]
     dec     rcx
     jnz     loopImprimirFil
-
 ret
 
 mostrarMsjCualesMatricesRestar:
@@ -550,7 +545,6 @@ validarNumMatRestar:
     inc     qword[indiceVector]
     imul    rbx,qword[indiceVector],8
     mov     qword[posicionVector],rbx
-
 ret
 
 numMatRestarInvalido:
@@ -578,7 +572,6 @@ validarCantMatricesRestar:
     mov     rcx,qword[cantMatrices]    
     cmp     qword[cantMatricesRestar],rcx 
     jg      cantMatricesRestarInvalido
-
 ret
 
 cantMatricesRestarInvalido:
@@ -588,11 +581,9 @@ cantMatricesRestarInvalido:
 ret
 
 igualdadDeMatrices:
-
     call    ingresarNumMatricesIgualar
 
 igualarMatrices:
-
     sub     rbx,rbx
     mov     bx,word[fila]
     imul    bx,word[columna]
@@ -634,7 +625,6 @@ igualar:
     jnz     igualar
 
     jmp     matricesIguales
-
 ret
 
 matricesIguales:
@@ -701,7 +691,6 @@ matricesInvalidas:
 ret
 
 matrizPorEscalar:
-    
     call    ingresoNumMatrizPorEscalar
 
     call    ingresarEscalar
@@ -779,11 +768,9 @@ loopImprimirElemColMultiplicar:
     mov     rcx,qword[auxiliarFila]
     dec     rcx
     jnz     loopImprimirFilMultiplicar
-
 ret 
 
 ingresarEscalar:
-
     mov     rdi,msjIngEscalar
     call    puts
 
@@ -791,11 +778,9 @@ ingresarEscalar:
     call    gets
 
     call    validarEscalar
-
 ret
 
 ingresoNumMatrizPorEscalar:
-
     mov     rdi,msjIngMatrizPorEscalar
     call    puts
 
@@ -804,6 +789,7 @@ ingresoNumMatrizPorEscalar:
 
     call    validarNumMatrizXEscalar
 ret
+
 validarEscalar:
     mov     rdi,inputEscalar      
     mov     rsi,formatoInputElemento
@@ -840,7 +826,6 @@ validarNumMatrizXEscalar:
     mov     rcx,qword[cantMatrices]       
     cmp     qword[matrizAMultiplicar],rcx  
     jg      matrizInvalida             
-
 ret
 
 matrizInvalida:
@@ -850,7 +835,6 @@ matrizInvalida:
 ret
 
 modificiarValorDeMatriz:
-    
     call    ingresarMatrizElementoModificar
 
     call    ingresarFilColElementoModificar
@@ -877,7 +861,6 @@ modificarValor:
     imul    rbx,rbx,8
     mov     rax,qword[elementoModificado]
     mov     qword[matrices+rbx],rax
-
 ret
 
 ingresarElemento:
@@ -888,7 +871,6 @@ ingresarElemento:
     call    gets
 
     call    validarElementoModificado
-
 ret
 
 validarElementoModificado:
@@ -907,7 +889,6 @@ validarElementoModificado:
     jl      elementoModificadoInvalido
     cmp     qword[elementoModificado],99  
     jg      elementoModificadoInvalido           
-
 ret
 
 elementoModificadoInvalido:
@@ -924,7 +905,6 @@ ingresarMatrizElementoModificar:
     call    gets
 
     call    validarNumMatrizModificar
-
 ret
 
 validarNumMatrizModificar:
@@ -944,7 +924,6 @@ validarNumMatrizModificar:
     mov     rcx,qword[cantMatrices]       
     cmp     qword[matrizAModificar],rcx  
     jg      matrizInvalidaModificar             
-
 ret
 
 matrizInvalidaModificar:
@@ -988,8 +967,7 @@ validarFilColMatrizModificar:
     mov     bx,word[columna]      
     cmp     word[columnaModificar],bx
     jg      filColModificarInvalido        
-
-    ret
+ret
 
 filColModificarInvalido:
     mov     rdi,msjIngFilColModificarInvalido
@@ -1027,7 +1005,6 @@ consultarValor:
     sub rsp, 8
 	call printf
 	add rsp, 8
-
 ret
 
 ingresarFilColElementoConsultar:
@@ -1064,8 +1041,7 @@ validarFilColMatrizConsultar:
     mov     bx,word[columna]      
     cmp     word[columnaConsultar],bx
     jg      filColConsultarInvalido        
-
-    ret
+ret
 
 filColConsultarInvalido:
     mov     rdi,msjIngFilColConsultarInvalido
@@ -1081,7 +1057,6 @@ ingresarMatrizElementoConsultar:
     call    gets
 
     call    validarNumMatrizConsultar
-
 ret
 
 validarNumMatrizConsultar:
@@ -1101,7 +1076,6 @@ validarNumMatrizConsultar:
     mov     rcx,qword[cantMatrices]       
     cmp     qword[matrizAConsultar],rcx  
     jg      matrizInvalidaConsultar             
-
 ret
 
 matrizInvalidaConsultar:
@@ -1168,7 +1142,6 @@ loopImprimirElementoCol:
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
     jnz     imprimir
-
 ret
 
 ;--------------------------------------------------------
