@@ -358,13 +358,7 @@ opcionInvalida:
 ret
 
 restaDeMatrices:
-    mov     rdi,msjCuantasMatrices
-    call    puts
-
-    mov     rdi,inputCantMatricesRestar
-    call    gets
-
-    call    validarCantMatricesRestar
+    call    mostarMsjCuantasMatricesRestar
 
     mov     rdi,msjCualesMatricesRestar
     call    puts
@@ -526,6 +520,16 @@ loopImprimirElemCol:
 
 ret
 
+mostarMsjCuantasMatricesRestar:
+    mov     rdi,msjCuantasMatrices
+    call    puts
+
+    mov     rdi,inputCantMatricesRestar
+    call    gets
+
+    call    validarCantMatricesRestar
+ret
+
 validarNumMatRestar:
     mov     rdi,inputNumMatRestar 
     mov     rsi,formatoInputNumero
@@ -586,7 +590,7 @@ ret
 cantMatricesRestarInvalido:
     mov     rdi,msjIngCantMatricesRestarInvalido
     call    puts
-    jmp     restaDeMatrices
+    jmp     mostarMsjCuantasMatricesRestar
 ret
 
 igualdadDeMatrices:
