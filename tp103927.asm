@@ -16,7 +16,6 @@ section .data
     indiceMatriz                dq  1
     indiceFila                  dq  1
     indiceCol                   dq  1
-    ;msjDebug                    db  "llegue aca"
     auxiliarFila                dq  0
     auxiliarCol                 dq  0
     matrices         times 320 	dq  0
@@ -119,17 +118,11 @@ section .bss
 section .text
 main:
 sub     rsp,8
-
     call ingresoCantMatrices
-
     call ingresoCantFilCol
-
     call ingresoMatrices 
-
     call imprimirMatrices
-
     call menuDeOpciones
-
 add     rsp,8 
 ret
 
