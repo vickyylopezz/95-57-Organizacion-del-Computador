@@ -595,16 +595,8 @@ cantMatricesRestarInvalido:
 ret
 
 igualdadDeMatrices:
-    mov     rdi,msjCualesMatricesIgualar
-    call    puts
 
-    mov     rdi,inputMatriz1
-    call    gets
-
-    mov     rdi,inputMatriz2
-    call    gets
-
-    call    validarNumMatrices
+    call    ingresarNumMatricesIgualar
 
 igualarMatrices:
 
@@ -662,7 +654,14 @@ matricesDistintas:
     call    puts
 ret
 
-validarNumMatrices:
+ingresarNumMatricesIgualar:
+    mov     rdi,msjCualesMatricesIgualar
+    call    puts
+
+    mov     rdi,inputMatriz1
+    call    gets
+
+validarPrimezMatriz:
     mov     rdi,inputMatriz1         
     mov     rsi,formatoInputElemento
     mov     rdx,matriz1                
@@ -674,6 +673,16 @@ validarNumMatrices:
     cmp     rax,1                   
     jl      matricesInvalidas
 
+    cmp     qword[matriz1],1    
+    jl      matricesInvalidas 
+    mov     rcx,qword[cantMatrices]       
+    cmp     qword[matriz1],rcx  
+    jg      matricesInvalidas
+
+ingresarSegundaMatrizIgualar:
+    mov     rdi,inputMatriz2
+    call    gets
+
     mov     rdi,inputMatriz2         
     mov     rsi,formatoInputElemento
     mov     rdx,matriz2                
@@ -683,26 +692,19 @@ validarNumMatrices:
     call    sscanf  
     add		rsp,[plusRsp]   ;add rsp,32    
     cmp     rax,1                   
-    jl      matricesInvalidas  
-
-    cmp     qword[matriz1],1    
-    jl      matricesInvalidas 
-    mov     rcx,qword[cantMatrices]       
-    cmp     qword[matriz1],rcx  
-    jg      matricesInvalidas        
+    jl      matricesInvalidas
 
     cmp     qword[matriz2],1 
     jl      matricesInvalidas  
     mov     rcx,qword[cantMatrices]      
     cmp     qword[matriz2],rcx 
-    jg      matricesInvalidas        
-
+    jg      matricesInvalidas
 ret
 
 matricesInvalidas:
     mov     rdi,msjIngMatricesIgualarInvalido
     call    puts
-    jmp     igualdadDeMatrices
+    jmp     ingresarNumMatricesIgualar
 ret
 
 matrizPorEscalar:
