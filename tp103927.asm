@@ -291,6 +291,27 @@ elementoInvalido:
 ret
 
 menuDeOpciones:
+
+    call    mostrarMenu
+
+    cmp     qword[opcion],1                   
+    je      restaDeMatrices
+
+    cmp     qword[opcion],2
+    je      igualdadDeMatrices
+
+    cmp     qword[opcion],3
+    je      matrizPorEscalar
+
+    cmp     qword[opcion],4
+    je      modificiarValorDeMatriz
+
+    cmp     qword[opcion],5
+    je      consultarValorDeMatriz
+
+ret
+
+mostrarMenu:
     mov     rdi,msjOpciones
     call    puts
     mov     rdi,opcionUno
@@ -308,22 +329,6 @@ menuDeOpciones:
     call    gets
 
     call    validarOpcion
-
-    cmp     qword[opcion],1                   
-    je      restaDeMatrices
-
-    cmp     qword[opcion],2
-    je      igualdadDeMatrices
-
-    cmp     qword[opcion],3
-    je      matrizPorEscalar
-
-    cmp     qword[opcion],4
-    je      modificiarValorDeMatriz
-
-    cmp     qword[opcion],5
-    je      consultarValorDeMatriz
-
 ret
 
 validarOpcion:
@@ -349,7 +354,7 @@ ret
 opcionInvalida:
     mov     rdi,msjOpcionInvalida
     call    puts
-    jmp     menuDeOpciones
+    jmp     mostrarMenu
 ret
 
 restaDeMatrices:
