@@ -360,27 +360,7 @@ ret
 restaDeMatrices:
     call    mostarMsjCuantasMatricesRestar
 
-    mov     rdi,msjCualesMatricesRestar
-    call    puts
-
-    ;call    imprimirMatrices
-
-    mov     qword[posicionVector],0
-    mov     qword[indiceVector],0
-
-    sub     rcx,rcx
-    mov     rcx,qword[cantMatricesRestar]
-
-ingresoMatricesARestar:
-    mov     qword[auxiliarMatrices],rcx
-    mov     rdi,inputNumMatRestar
-    call    gets
-
-    call    validarNumMatRestar
-
-    mov     rcx,qword[auxiliarMatrices]
-    dec     rcx
-    jnle     ingresoMatricesARestar
+    call    mostrarMsjCualesMatricesRestar
 
 calculoDesplazamientoPrimerMatriz:
     sub     rbx,rbx
@@ -520,6 +500,28 @@ loopImprimirElemCol:
 
 ret
 
+mostrarMsjCualesMatricesRestar:
+    mov     rdi,msjCualesMatricesRestar
+    call    puts
+
+    mov     qword[posicionVector],0
+    mov     qword[indiceVector],0
+
+    sub     rcx,rcx
+    mov     rcx,qword[cantMatricesRestar]
+
+ingresoMatricesARestar:
+    mov     qword[auxiliarMatrices],rcx
+    mov     rdi,inputNumMatRestar
+    call    gets
+
+    call    validarNumMatRestar
+
+    mov     rcx,qword[auxiliarMatrices]
+    dec     rcx
+    jnle     ingresoMatricesARestar
+ret
+
 mostarMsjCuantasMatricesRestar:
     mov     rdi,msjCuantasMatrices
     call    puts
@@ -561,8 +563,7 @@ ret
 numMatRestarInvalido:
     mov     rdi,msjNumeroDeMatrizInvalido
     call    puts
-    ;jmp     ingresoMatricesARestar
-    ;call     restaDeMatrices
+    jmp     mostrarMsjCualesMatricesRestar
 ret
 
 validarCantMatricesRestar:
