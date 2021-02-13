@@ -90,7 +90,6 @@ section .data
 
 section .bss
     inputCantMatrices     resq    10
-    esValido              resb    1
     cantMatrices          resq    1
     plusRsp		          resq	  1
     inputDosElementos     resb    50
@@ -142,8 +141,6 @@ ingresoCantMatrices:
     call    gets
 
 validarCantMatrices:
-    mov     byte[esValido],'N'
-
     mov     rdi,inputCantMatrices 
     mov     rsi,formatoInputNumero
     mov     rdx,cantMatrices
@@ -161,8 +158,6 @@ validarCantMatrices:
     cmp     qword[cantMatrices],5    
     jg      cantMatricesInvalido
 
-    mov     byte[esValido],'S'   
-
 ret
 
 cantMatricesInvalido:
@@ -179,8 +174,6 @@ ingresoCantFilCol:
     call    gets
 
 validarFilCol:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputDosElementos         
     mov     rsi,formatoInputDosElementos  
     mov     rdx,fila                
@@ -203,7 +196,6 @@ validarFilCol:
     cmp     word[columna],8 
     jg      filColInvalido        
 
-    mov     byte[esValido],'S'
     ret
 
 filColInvalido:
@@ -213,29 +205,29 @@ filColInvalido:
 ret
 
 ingresoMatrices:
-
-    sub     rcx,rcx             
-    mov     rcx,[cantMatrices] 
+    sub     rcx,rcx               
+    mov     rcx,qword[cantMatrices] 
 
 mensajeIngMatrices:
     push    rcx
-    
+
     mov     rdi,msjIngMatriz
     mov     rsi,qword[indiceMatriz]
     call    printf
 
     sub     rcx,rcx             
-    mov     cx,[fila]
+    mov     cx,word[fila]
 
 mensajeFila:
-    mov     [auxiliarFila],rcx
+    mov     qword[auxiliarFila],rcx
 
     sub     rcx,rcx             
-    mov     cx,[columna]
+    mov     cx,word[columna]
 
 msjColumna:
-    mov     [auxiliarCol],rcx
+    mov     qword[auxiliarCol],rcx
 
+imprimirMsj:
     mov     rdi,msjIngMatrizFil
     mov     rsi,qword[indiceFila]
     mov     rdx,qword[indiceCol]
@@ -244,38 +236,7 @@ msjColumna:
     mov     rdi,inputElemento
     call gets
 
-    sub     rbx,rbx
-    mov     rbx,qword[indiceVector]
-    sub     rbx,1
-    
-    imul    rbx,rbx,8
-    mov     qword[posicionVector],rbx   
-
-    inc     qword[indiceVector]
-    call    validarElemento
-
-    inc     qword[indiceCol]
-    mov     rcx,[auxiliarCol]
-    dec     rcx
-    jnz     msjColumna
-
-    mov     qword[indiceCol],1
-    inc     qword[indiceFila]
-    mov     rcx,[auxiliarFila]
-    dec     rcx
-    jnz     mensajeFila
-
-    mov     qword[indiceFila],1
-    inc     qword[indiceMatriz]
-    pop     rcx
-    dec     rcx
-    jnz     mensajeIngMatrices
-
-ret
-
 validarElemento:
-    mov     byte[esValido],'N'
-
     mov     rdi,inputElemento       
     mov     rsi,formatoInputElemento 
     mov     rdx,elemento
@@ -293,18 +254,40 @@ validarElemento:
     cmp     qword[elemento],99    
     jg      elementoInvalido               
 
-    mov     byte[esValido],'S'
-
-    mov     rbx,qword[posicionVector]
+    sub     rbx,rbx
+    mov     rbx,qword[indiceVector]
+    sub     rbx,1
+    
+    imul    rbx,rbx,8
+    mov     qword[posicionVector],rbx 
     mov     rdx,qword[elemento]
     
     mov     qword[matrices+rbx],rdx
+    inc     qword[indiceVector]
 
-    ret
+    inc     qword[indiceCol]
+    mov     rcx,qword[auxiliarCol]
+    dec     rcx
+    jnz     msjColumna
+
+    mov     qword[indiceCol],1
+    inc     qword[indiceFila]
+    mov     rcx,qword[auxiliarFila]
+    dec     rcx
+    jnz     mensajeFila
+
+    mov     qword[indiceFila],1
+    inc     qword[indiceMatriz]
+    pop     rcx
+    dec     rcx
+    jnz     mensajeIngMatrices
+
+ret
 
 elementoInvalido:
     mov     rdi,msjElementoInvalido
     call    puts
+    jmp     imprimirMsj
 ret
 
 menuDeOpciones:
@@ -344,8 +327,6 @@ menuDeOpciones:
 ret
 
 validarOpcion:
-    mov     byte[esValido],'N'
-
     mov     rdi,inputOpcion 
     mov     rsi,formatoInputNumero
     mov     rdx,opcion
@@ -362,8 +343,6 @@ validarOpcion:
     jl      opcionInvalida        
     cmp     qword[opcion],5    
     jg      opcionInvalida
-
-    mov     byte[esValido],'S'   
 
 ret
 
@@ -543,8 +522,6 @@ loopImprimirElemCol:
 ret
 
 validarNumMatRestar:
-    mov     byte[esValido],'N'
-
     mov     rdi,inputNumMatRestar 
     mov     rsi,formatoInputNumero
     mov     rdx,numMatRestar
@@ -570,7 +547,6 @@ validarNumMatRestar:
     imul    rbx,qword[indiceVector],8
     mov     qword[posicionVector],rbx
 
-    mov     byte[esValido],'S'
 ret
 
 numMatRestarInvalido:
@@ -581,8 +557,6 @@ numMatRestarInvalido:
 ret
 
 validarCantMatricesRestar:
-    mov     byte[esValido],'N'
-
     mov     rdi,inputCantMatricesRestar 
     mov     rsi,formatoInputNumero
     mov     rdx,cantMatricesRestar
@@ -602,7 +576,6 @@ validarCantMatricesRestar:
     cmp     qword[cantMatricesRestar],rcx 
     jg      cantMatricesRestarInvalido
 
-    mov     byte[esValido],'S'
 ret
 
 cantMatricesRestarInvalido:
@@ -680,8 +653,6 @@ matricesDistintas:
 ret
 
 validarNumMatrices:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputMatriz1         
     mov     rsi,formatoInputElemento
     mov     rdx,matriz1                
@@ -716,7 +687,6 @@ validarNumMatrices:
     cmp     qword[matriz2],rcx 
     jg      matricesInvalidas        
 
-    mov     byte[esValido],'S'
 ret
 
 matricesInvalidas:
@@ -830,8 +800,6 @@ ingresoNumMatrizPorEscalar:
     call    validarNumMatrizXEscalar
 ret
 validarEscalar:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputEscalar      
     mov     rsi,formatoInputElemento
     mov     rdx,escalar                
@@ -851,8 +819,6 @@ escalarInvalido:
 ret
 
 validarNumMatrizXEscalar:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputNumMatrizXEscalar       
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAMultiplicar                
@@ -870,7 +836,6 @@ validarNumMatrizXEscalar:
     cmp     qword[matrizAMultiplicar],rcx  
     jg      matrizInvalida             
 
-    mov     byte[esValido],'S'
 ret
 
 matrizInvalida:
@@ -922,8 +887,6 @@ ingresarElemento:
 ret
 
 validarElementoModificado:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputElementoModificado    
     mov     rsi,formatoInputElemento
     mov     rdx,elementoModificado                
@@ -940,7 +903,6 @@ validarElementoModificado:
     cmp     qword[elementoModificado],99  
     jg      elementoModificadoInvalido           
 
-    mov     byte[esValido],'S'
 ret
 
 elementoModificadoInvalido:
@@ -961,8 +923,6 @@ ingresarMatrizElementoModificar:
 ret
 
 validarNumMatrizModificar:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputNumMatrizModificar    
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAModificar                
@@ -980,7 +940,6 @@ validarNumMatrizModificar:
     cmp     qword[matrizAModificar],rcx  
     jg      matrizInvalidaModificar             
 
-    mov     byte[esValido],'S'
 ret
 
 matrizInvalidaModificar:
@@ -1000,7 +959,6 @@ ingresarFilColElementoModificar:
 ret
 
 validarFilColMatrizModificar:
-    mov     byte[esValido],'N'   
 
     mov     rdi,inputFilColMatrizModificar         
     mov     rsi,formatoInputDosElementos  
@@ -1026,7 +984,6 @@ validarFilColMatrizModificar:
     cmp     word[columnaModificar],bx
     jg      filColModificarInvalido        
 
-    mov     byte[esValido],'S'
     ret
 
 filColModificarInvalido:
@@ -1079,8 +1036,6 @@ ingresarFilColElementoConsultar:
 ret
 
 validarFilColMatrizConsultar:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputFilColMatrizConsultar         
     mov     rsi,formatoInputDosElementos  
     mov     rdx,filaConsultar                
@@ -1105,7 +1060,6 @@ validarFilColMatrizConsultar:
     cmp     word[columnaConsultar],bx
     jg      filColConsultarInvalido        
 
-    mov     byte[esValido],'S'
     ret
 
 filColConsultarInvalido:
@@ -1126,8 +1080,6 @@ ingresarMatrizElementoConsultar:
 ret
 
 validarNumMatrizConsultar:
-    mov     byte[esValido],'N'   
-
     mov     rdi,inputNumMatrizConsultar  
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAConsultar                
@@ -1145,7 +1097,6 @@ validarNumMatrizConsultar:
     cmp     qword[matrizAConsultar],rcx  
     jg      matrizInvalidaConsultar             
 
-    mov     byte[esValido],'S'
 ret
 
 matrizInvalidaConsultar:
