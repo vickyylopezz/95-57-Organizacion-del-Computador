@@ -5,87 +5,98 @@ extern sscanf
 extern printf
 
 section .data
-    msjIngMatriz                db  "Ingrese de la matriz %li",10,0
-    msjIngMatrizFil             db  "el elemento en la fila %li columna %li",10,0
+;Mensajes
+    msjIngMatriz                db  "De la matriz %li",10,0
+    msjIngMatrizFil             db  "ingrese el elemento en la fila %li columna %li",10,0
     msjIngCantMatrices          db  "Ingrese la cantidad de matrices con las que va a operar",0
-    formatoInputNumero          db  "%li",0
     msjIngCantMatricesInvalido  db  "La cantidad de matrices debe ser de 2 a 5",0
     msjIngCantFilCol            db  "Ingrese la cantidad de filas y columnas que tendran las matrices, separados por un espacio",0
-    formatoInputDosElementos    db  "%hi %hi",0
     msjIngCantFilColInvalido    db  "La fila y columna debe ser un numero entre [1..8]",0
-    indiceMatriz                dq  1
-    indiceFila                  dq  1
-    indiceCol                   dq  1
-    auxiliarFila                dq  0
-    auxiliarCol                 dq  0
-    matrices         times 320 	dq  0
-    formatoInputElemento        db  "%li",0
     msjElementoInvalido         db  "Elemento ingresado invalido, debe ser un numero entre -99 y 99, se pondra 0 en esa posicion",10,0
-    posicionVector              dq  0
     msjElementoMatriz           dq  "  %li  ",0
-    indiceVector                dq  1
     msjMostrarMatriz            db  "Matrices:",10,0
-    indiceImprimir              dq  0
     msjNewLine                  dw  " ",10,0
-    auxiliarImprimir            dq  0
-    auxiliarMatrices            dq  0
     msjOpciones                 db  "Ingrese...",0
+    msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
+    msjCuantasMatrices          db  "Ingrese cuantas matrices quiere restar",0
+    msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
+    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
+    msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
+    msjResultadoResta           db  "Resultado de la resta: ",10,0
+    msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
+    msjIngMatricesIgualarInvalido   db  "Numeros de matrices invalido",0
+    msjMatricesDistintas        db  "Las matrices son distintas",0
+    msjMatricesIguales          db  "Las matrices son iguales",0
+    msjIngMatrizPorEscalar      db  "Ingrese el numero de matriz que desea multiplicar por escalar",0
+    msjIngMatricesXEscInvalida  db  "Numero de matriz invalido",0
+    msjIngEscalar               db  "Ingrese el escalar para multiplicar por la matriz",0
+    msjEscalarInvalido          db  "Escalar invalido",0
+    msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
+    msjIngNumMatrizElemenMod    db  "Ingrese el numero de matriz que desea modificar",0
+    msjIngMatricesModificarInvalida db  "Numero de matriz invalido",0
+    msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)"
+    msjIngFilColModificarInvalido   db  "Fila y columna ingresadas invalido",0
+    msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna",0
+    msjElementoModificadoInvalido   dq  "Numero invalido, debe ser un numero entre -99 y 99",0
+    msjIngNumMatrizElemenCon    db  "Ingrese el numero de la matriz que quiere consultar el elemento",0
+    msjIngMatricesConsultarInvalida db  "Numero de matriz invalido",0
+    msjIngFilColConsultar       db  "Ingrese la fila y la columna del elemento que desea consultar (separadas por un espacio)"
+    msjIngFilColConsultarInvalido   db  "Fila y columna ingresadas invalido",0
+    msjElementoConsultado       db  "El elemento en esa posicion es: %li",10,0
+    
+;Opciones menu
     opcionUno                   db  "1 para hacer resta de 2 o más matrices",0
     opcionDos                   db  "2 para ver si dos matrices son iguales",0
     opcionTres                  db  "3 para multiplicar una matriz por un valor escalar leído desde teclado",0
     opcionCuatro                db  "4 para modificar el valor de un elemento de una matriz",0
     opcionCinco                 db  "5 para consultar el valor de un elemento de una matriz",0
-    msjOpcionInvalida           db  "Opcion invalida, debe ser un numero entre 1 y 5",0
-    msjCuantasMatrices          db  "Ingrese cuantas matrices que quiere restar",0
-    msjIngCantMatricesRestarInvalido    db  "Cantidad ingresada invalida",0
-    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
-    msjNumeroDeMatrizInvalido   db  "Numero de matriz invalido, vuelva a ingresar los numeros de las matrices nuevamente",0
-    matrizResta      times 64   dq  0
-    auxiliarResta               dq  0
+
+;Formato
+    formatoInputNumero          db  "%li",0
+    formatoInputDosElementos    db  "%hi %hi",0
+    formatoInputElemento        db  "%li",0
+
+;Indices y posiciones
+    indiceMatriz                dq  1
+    indiceFila                  dq  1
+    indiceCol                   dq  1
+    indiceVector                dq  1
+    indiceImprimir              dq  0
     indiceRestar                dq  0
-    posicionRestar              dq  0
-    matrizARestar               dq  0
-    msjResultadoResta           db  "Resultado de la resta: ",10,0
-    msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
-    msjIngMatricesIgualarInvalido   db  "Numeros de matrices invalido",0
-    matriz1                     dq  0   
-    matriz2                     dq  0
     indiceMatriz1               dq  0
     indiceMatriz2               dq  0
-    posicionMatriz1             dq  0
-    elemento1                   dq  0
-    posicionMatriz2             dq  0
-    elemento2                   dq  0
-    msjMatricesDistintas        db  "Las matrices son distintas",0
-    msjMatricesIguales          db  "Las matrices son iguales",0
-    msjIngMatrizPorEscalar      db  "Ingrese el numero de matriz que desea multiplicar por escalar",0
-    matrizAMultiplicar          dq  0
-    msjIngMatricesXEscInvalida  db  "Numero de matriz invalido",0
-    msjIngEscalar               db  "Ingrese el escalar para multiplicar por la matriz",0
-    escalar                     dq  0
-    msjEscalarInvalido          db  "Escalar invalido",0
     indiceMultiplicar           dq  0
+    posicionVector              dq  0
+    posicionRestar              dq  0
+    posicionMatriz1             dq  0
+    posicionMatriz2             dq  0
     posicionMultiplicar         dq  0
+
+;Auxiliares
+    auxiliarFila                dq  0
+    auxiliarCol                 dq  0
+    auxiliarImprimir            dq  0
+    auxiliarMatrices            dq  0
+    auxiliar                    dq  0
+
+;Elementos
+    matrices         times 320 	dq  0
+    matrizResta      times 64   dq  0
+    matrizARestar               dq  0
+    matriz1                     dq  0   
+    matriz2                     dq  0
+    elemento1                   dq  0
+    elemento2                   dq  0
+    matrizAMultiplicar          dq  0
+    escalar                     dq  0
     matrizMultiplicar   times 64 dq 0
-    msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
-    msjIngNumMatrizElemenMod    db  "Ingrese el numero de matriz que desea modificar",0
     matrizAModificar            dq  0
-    msjIngMatricesModificarInvalida db  "Numero de matriz invalido",0
-    msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)"
     filaModificar               dw  0
     columnaModificar            dw  0
-    msjIngFilColModificarInvalido   db  "Fila y columna ingresadas invalido",0
     elementoModificado          dq  0
-    msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna",0
-    msjElementoModificadoInvalido   dq  "Numero invalido, debe ser un numero entre -99 y 99",0
-    msjIngNumMatrizElemenCon    db  "Ingrese el numero de la matriz que quiere consultar el elemento",0
     matrizAConsultar            dq  0
-    msjIngMatricesConsultarInvalida db  "Numero de matriz invalido",0
-    msjIngFilColConsultar       db  "Ingrese la fila y la columna del elemento que desea consultar (separadas por un espacio)"
     filaConsultar               dw  0
     columnaConsultar            dw  0
-    msjIngFilColConsultarInvalido   db  "Fila y columna ingresadas invalido",0
-    msjElementoConsultado       db  "El elemento en esa posicion es: %li",10,0
 
 section .bss
     inputCantMatrices     resq    10
@@ -356,7 +367,7 @@ calculoDesplazamientoPrimerMatriz:
     imul    bx,word[columna]
     sub     rcx,rcx
     mov     rcx,rbx
-    mov     qword[auxiliarResta],rcx
+    mov     qword[auxiliar],rcx
 
     mov     rax,qword[matricesRestar]
     dec     rax
@@ -385,9 +396,9 @@ guardarMatriz:
     imul    rbx,rbx,8
     mov     qword[posicionRestar],rbx
 
-    mov     rcx,qword[auxiliarResta]
+    mov     rcx,qword[auxiliar]
     dec     rcx
-    mov     qword[auxiliarResta],rcx
+    mov     qword[auxiliar],rcx
     jnz     guardarMatriz
 
     mov     qword[indiceMatriz],1
@@ -420,7 +431,7 @@ matrizRestar:
     mov     rcx,rbx
 
 resta:
-    mov     qword[auxiliarResta],rcx
+    mov     qword[auxiliar],rcx
 
     mov     rbx,qword[indiceRestar]
     imul    rbx,rbx,8
@@ -436,7 +447,7 @@ resta:
 
     inc     qword[indiceVector]
     inc     qword[indiceRestar]
-    mov     rcx,qword[auxiliarResta]
+    mov     rcx,qword[auxiliar]
     dec     rcx
     jnz     resta
     
