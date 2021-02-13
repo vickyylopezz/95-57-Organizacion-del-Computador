@@ -51,7 +51,6 @@ section .data
     indiceVector                dq  1
     indiceMatriz1               dq  0
     indiceMatriz2               dq  0
-    indiceMultiplicar           dq  0
     posicionVector              dq  0
     posicionRestar              dq  0
     posicionMatriz1             dq  0
@@ -700,7 +699,7 @@ matrizPorEscalar:
     imul    rbx,qword[matrizAMultiplicar]
     mov     qword[indiceVector],rbx
 
-    mov     qword[indiceMultiplicar],0
+    mov     qword[indice],0
 
 multiplicarMatriz:
     mov     qword[auxiliarMatrices],rcx
@@ -712,13 +711,13 @@ multiplicarMatriz:
     mov     rax,qword[matrices+rbx]
     imul    rax,qword[escalar]
 
-    mov     rbx,qword[indiceMultiplicar]
+    mov     rbx,qword[indice]
     imul    rbx,rbx,8
     mov     qword[posicionMultiplicar],rbx
 
     mov     qword[matrizMultiplicar+rbx],rax
 
-    inc     qword[indiceMultiplicar]
+    inc     qword[indice]
     inc     qword[indiceVector]
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
