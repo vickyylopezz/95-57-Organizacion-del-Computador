@@ -84,33 +84,19 @@ section .data
     columnaConsultar            dw  0
 
 section .bss
-    inputCantMatrices     resq    10
     cantMatrices          resq    1
     plusRsp		          resq	  1
-    inputDosElementos     resb    50
+    inputDosElementos     resw    50
     fila                  resw    1   
     columna               resw    1
-    inputElemento         resq    1
     filas                 resq    1
     elemento              resq    1
-    inputOpcion           resq    1
     opcion                resq    1
-    inputCantMatricesRestar resq    1
     cantMatricesRestar    resq    1
-    inputNumMatRestar     resq    1
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
-    inputMatriz1          resq    1
-    inputMatriz2          resq    1
-    inputNumMatrizXEscalar  resq  1
-    inputEscalar          resq    1
-    inputNumMatrizModificar resq    50
-    inputFilColMatrizModificar  resw    50
-    inputElementoModificado resq    1
-    inputNumMatrizConsultar resq    1
-    inputFilColMatrizConsultar  resw    50
-
-
+    inputNumero           resq    1
+    
 section .text
 main:
 sub     rsp,8
@@ -126,11 +112,11 @@ ingresoCantMatrices:
     mov     rdi,msjIngCantMatrices
     call    puts
 
-    mov     rdi,inputCantMatrices
+    mov     rdi,inputNumero
     call    gets
 
 validarCantMatrices:
-    mov     rdi,inputCantMatrices 
+    mov     rdi,inputNumero 
     mov     rsi,formatoInputElemento
     mov     rdx,cantMatrices
 
@@ -221,11 +207,11 @@ imprimirMsj:
     mov     rdx,qword[indiceCol]
     call    printf
 
-    mov     rdi,inputElemento
+    mov     rdi,inputNumero
     call gets
 
 validarElemento:
-    mov     rdi,inputElemento       
+    mov     rdi,inputNumero       
     mov     rsi,formatoInputElemento 
     mov     rdx,elemento
     call    checkAlign
@@ -310,14 +296,14 @@ mostrarMenu:
     mov     rdi,opcionCinco
     call    puts
 
-    mov     rdi,inputOpcion
+    mov     rdi,inputNumero
     call    gets
 
     call    validarOpcion
 ret
 
 validarOpcion:
-    mov     rdi,inputOpcion 
+    mov     rdi,inputNumero
     mov     rsi,formatoInputElemento
     mov     rdx,opcion
 
@@ -496,7 +482,7 @@ mostrarMsjCualesMatricesRestar:
 
 ingresoMatricesARestar:
     mov     qword[auxiliarMatrices],rcx
-    mov     rdi,inputNumMatRestar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarNumMatRestar
@@ -510,14 +496,14 @@ mostarMsjCuantasMatricesRestar:
     mov     rdi,msjCuantasMatrices
     call    puts
 
-    mov     rdi,inputCantMatricesRestar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarCantMatricesRestar
 ret
 
 validarNumMatRestar:
-    mov     rdi,inputNumMatRestar 
+    mov     rdi,inputNumero
     mov     rsi,formatoInputElemento
     mov     rdx,numMatRestar
 
@@ -550,7 +536,7 @@ numMatRestarInvalido:
 ret
 
 validarCantMatricesRestar:
-    mov     rdi,inputCantMatricesRestar 
+    mov     rdi,inputNumero 
     mov     rsi,formatoInputElemento
     mov     rdx,cantMatricesRestar
 
@@ -637,11 +623,11 @@ ingresarNumMatricesIgualar:
     mov     rdi,msjCualesMatricesIgualar
     call    puts
 
-    mov     rdi,inputMatriz1
+    mov     rdi,inputNumero
     call    gets
 
 validarPrimezMatriz:
-    mov     rdi,inputMatriz1         
+    mov     rdi,inputNumero       
     mov     rsi,formatoInputElemento
     mov     rdx,matriz1                
     call    checkAlign
@@ -659,10 +645,10 @@ validarPrimezMatriz:
     jg      matricesInvalidas
 
 ingresarSegundaMatrizIgualar:
-    mov     rdi,inputMatriz2
+    mov     rdi,inputNumero
     call    gets
 
-    mov     rdi,inputMatriz2         
+    mov     rdi,inputNumero      
     mov     rsi,formatoInputElemento
     mov     rdx,matriz2                
     call    checkAlign
@@ -770,7 +756,7 @@ ingresarEscalar:
     mov     rdi,msjIngEscalar
     call    puts
 
-    mov     rdi,inputEscalar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarEscalar
@@ -780,14 +766,14 @@ ingresoNumMatrizPorEscalar:
     mov     rdi,msjIngMatrizPorEscalar
     call    puts
 
-    mov     rdi,inputNumMatrizXEscalar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarNumMatrizXEscalar
 ret
 
 validarEscalar:
-    mov     rdi,inputEscalar      
+    mov     rdi,inputNumero    
     mov     rsi,formatoInputElemento
     mov     rdx,escalar                
     call    checkAlign
@@ -806,7 +792,7 @@ escalarInvalido:
 ret
 
 validarNumMatrizXEscalar:
-    mov     rdi,inputNumMatrizXEscalar       
+    mov     rdi,inputNumero       
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAMultiplicar                
     call    checkAlign
@@ -863,14 +849,14 @@ ingresarElemento:
     mov     rdi,msjIngElemento
     call    puts
 
-    mov     rdi,inputElementoModificado
+    mov     rdi,inputNumero
     call    gets
 
     call    validarElementoModificado
 ret
 
 validarElementoModificado:
-    mov     rdi,inputElementoModificado    
+    mov     rdi,inputNumero   
     mov     rsi,formatoInputElemento
     mov     rdx,elementoModificado                
     call    checkAlign
@@ -897,14 +883,14 @@ ingresarMatrizElementoModificar:
     mov     rdi,msjIngNumMatrizElemenMod
     call    puts
 
-    mov     rdi,inputNumMatrizModificar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarNumMatrizModificar
 ret
 
 validarNumMatrizModificar:
-    mov     rdi,inputNumMatrizModificar    
+    mov     rdi,inputNumero   
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAModificar                
     call    checkAlign
@@ -932,7 +918,7 @@ ingresarFilColElementoModificar:
     mov     rdi,msjIngFilColModificar
     call    puts
 
-    mov     rdi,inputFilColMatrizModificar
+    mov     rdi,inputDosElementos
     call    gets
 
     call    validarFilColMatrizModificar
@@ -940,7 +926,7 @@ ret
 
 validarFilColMatrizModificar:
 
-    mov     rdi,inputFilColMatrizModificar         
+    mov     rdi,inputDosElementos       
     mov     rsi,formatoInputDosElementos  
     mov     rdx,filaModificar                
     mov     rcx,columnaModificar             
@@ -1007,14 +993,14 @@ ingresarFilColElementoConsultar:
     mov     rdi,msjIngFilColConsultar
     call    puts
 
-    mov     rdi,inputFilColMatrizConsultar
+    mov     rdi,inputDosElementos
     call    gets
 
     call    validarFilColMatrizConsultar
 ret
 
 validarFilColMatrizConsultar:
-    mov     rdi,inputFilColMatrizConsultar         
+    mov     rdi,inputDosElementos     
     mov     rsi,formatoInputDosElementos  
     mov     rdx,filaConsultar                
     mov     rcx,columnaConsultar             
@@ -1049,14 +1035,14 @@ ingresarMatrizElementoConsultar:
     mov     rdi,msjIngNumMatrizElemenCon
     call    puts
 
-    mov     rdi,inputNumMatrizConsultar
+    mov     rdi,inputNumero
     call    gets
 
     call    validarNumMatrizConsultar
 ret
 
 validarNumMatrizConsultar:
-    mov     rdi,inputNumMatrizConsultar  
+    mov     rdi,inputNumero 
     mov     rsi,formatoInputElemento
     mov     rdx,matrizAConsultar                
     call    checkAlign
