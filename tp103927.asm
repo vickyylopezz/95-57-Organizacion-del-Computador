@@ -23,10 +23,10 @@ section .data
     msjIngEscalar               db  "Ingrese el escalar para multiplicar por la matriz",0
     msjResultadoMultiplicar     db  "Resultado multiplicacion: ",0
     msjIngNumMatrizElemenMod    db  "Ingrese el numero de matriz que desea modificar",0
-    msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)"
+    msjIngFilColModificar       db  "Ingrese la fila y la columna del elemento que desea modificar (separadas por un espacio)",0
     msjIngElemento              db  "Ingrese el numero que desea poner en esa fila y columna, debe ser un numero entre -99 y 99",0
     msjIngNumMatrizElemenCon    db  "Ingrese el numero de la matriz que quiere consultar el elemento",0
-    msjIngFilColConsultar       db  "Ingrese la fila y la columna del elemento que desea consultar (separadas por un espacio)"
+    msjIngFilColConsultar       db  "Ingrese la fila y la columna del elemento que desea consultar (separadas por un espacio)",0
     msjElementoConsultado       db  "El elemento en esa posicion es: %li",10,0
 
 ;Mensajes Invalidos
@@ -39,6 +39,7 @@ section .data
     opcionTres                  db  "3 para multiplicar una matriz por un valor escalar leído desde teclado",0
     opcionCuatro                db  "4 para modificar el valor de un elemento de una matriz",0
     opcionCinco                 db  "5 para consultar el valor de un elemento de una matriz",0
+    opcionSeis                  db  "6 para finalizar el programa",0
 
 ;Formato
     formatoInputDosElementos    db  "%hi %hi",0
@@ -63,6 +64,7 @@ section .data
     auxiliarImprimir            dq  0
     auxiliarMatrices            dq  0
     auxiliar                    dq  0
+    auxiliarGeneral             dq  0
 
 ;Elementos
     matrices         times 320 	dq  0
@@ -100,11 +102,19 @@ section .bss
 section .text
 main:
 sub     rsp,8
-    call ingresoCantMatrices
-    call ingresoCantFilCol
-    call ingresoMatrices 
-    call imprimirMatrices
-    call menuDeOpciones
+    call    ingresoCantMatrices
+    call    ingresoCantFilCol
+    call    ingresoMatrices 
+
+    mov     rcx,1
+loopPrograma:
+    mov     qword[auxiliarGeneral],rcx
+    call    imprimirMatrices
+    call    menuDeOpciones
+
+    mov     rcx,qword[auxiliarGeneral]
+    inc     rcx
+    jnz     loopPrograma
 add     rsp,8 
 ret
 
@@ -279,6 +289,9 @@ menuDeOpciones:
 
     cmp     qword[opcion],5
     je      consultarValorDeMatriz
+
+    cmp     qword[opcion],6
+    je      finalizarPrograma
 ret
 
 mostrarMenu:
@@ -294,6 +307,8 @@ mostrarMenu:
     call    puts
     mov     rdi,opcionCinco
     call    puts
+    mov     rdi,opcionSeis
+    call    puts    
 
     mov     rdi,inputNumero
     call    gets
@@ -316,7 +331,7 @@ validarOpcion:
 
     cmp     qword[opcion],1    
     jl      opcionInvalida        
-    cmp     qword[opcion],5    
+    cmp     qword[opcion],6    
     jg      opcionInvalida
 ret
 
@@ -1124,6 +1139,9 @@ loopImprimirElementoCol:
     jnz     imprimir
 ret
 
+finalizarPrograma:
+    mov     qword[auxiliarGeneral],-1
+ret
 ;--------------------------------------------------------
 ;           CheckAlign
 ;--------------------------------------------------------
