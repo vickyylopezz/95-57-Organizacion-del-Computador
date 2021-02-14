@@ -14,7 +14,7 @@ section .data
     msjMostrarMatriz            db  "Matrices:",10,0
     msjNewLine                  dw  " ",10,0
     msjCuantasMatrices          db  "Ingrese cuantas matrices quiere restar",0
-    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas",0
+    msjCualesMatricesRestar     db  "Cuales de las anteriores matrices desea restar? Indicando 1 para la primer matriz, 2 para la segunda y asi sucesivamente. Ingrese en el orden que desea restarlas, el primer numero, enter, el segundo, enter, etc",0
     msjResultadoResta           db  "Resultado de la resta: ",0
     msjCualesMatricesIgualar    db  "Ingrese los numeros de las dos matrices que desea igualar, primero uno, enter, luego el segundo",0
     msjMatricesDistintas        db  "Las matrices son distintas",0
@@ -96,7 +96,7 @@ section .bss
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
     inputNumero           resq    1
-    
+
 section .text
 main:
 sub     rsp,8
@@ -169,8 +169,7 @@ validarFilCol:
     jl      filColInvalido        
     cmp     word[columna],8 
     jg      filColInvalido        
-
-    ret
+ret
 
 filColInvalido:
     mov     rdi,msjNumeroInvalido
@@ -470,6 +469,43 @@ loopImprimirElemCol:
     jnz     loopImprimirFil
 ret
 
+mostarMsjCuantasMatricesRestar:
+    mov     rdi,msjCuantasMatrices
+    call    puts
+
+    mov     rdi,inputNumero
+    call    gets
+
+    call    validarCantMatricesRestar
+ret
+
+validarCantMatricesRestar:
+    mov     rdi,inputNumero 
+    mov     rsi,formatoInputElemento
+    mov     rdx,cantMatricesRestar
+
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32  
+
+    cmp     rax,1                   
+    jl      cantMatricesRestarInvalido
+
+    cmp     qword[cantMatricesRestar],2    
+    jl      cantMatricesRestarInvalido    
+    mov     rcx,qword[cantMatrices]    
+    cmp     qword[cantMatricesRestar],rcx 
+    jg      cantMatricesRestarInvalido
+ret
+
+cantMatricesRestarInvalido:
+    mov     rdi,msjNumeroInvalido
+    call    puts
+    jmp     mostarMsjCuantasMatricesRestar
+ret
+
 mostrarMsjCualesMatricesRestar:
     mov     rdi,msjCualesMatricesRestar
     call    puts
@@ -490,16 +526,6 @@ ingresoMatricesARestar:
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
     jnle     ingresoMatricesARestar
-ret
-
-mostarMsjCuantasMatricesRestar:
-    mov     rdi,msjCuantasMatrices
-    call    puts
-
-    mov     rdi,inputNumero
-    call    gets
-
-    call    validarCantMatricesRestar
 ret
 
 validarNumMatRestar:
@@ -533,33 +559,6 @@ numMatRestarInvalido:
     mov     rdi,msjNumeroInvalido
     call    puts
     jmp     mostrarMsjCualesMatricesRestar
-ret
-
-validarCantMatricesRestar:
-    mov     rdi,inputNumero 
-    mov     rsi,formatoInputElemento
-    mov     rdx,cantMatricesRestar
-
-    call    checkAlign
-    sub     rsp,[plusRsp]
-
-    call    sscanf  
-    add		rsp,[plusRsp]   ;add rsp,32  
-
-    cmp     rax,1                   
-    jl      cantMatricesRestarInvalido
-
-    cmp     qword[cantMatricesRestar],2    
-    jl      cantMatricesRestarInvalido    
-    mov     rcx,qword[cantMatrices]    
-    cmp     qword[cantMatricesRestar],rcx 
-    jg      cantMatricesRestarInvalido
-ret
-
-cantMatricesRestarInvalido:
-    mov     rdi,msjNumeroInvalido
-    call    puts
-    jmp     mostarMsjCuantasMatricesRestar
 ret
 
 igualdadDeMatrices:
@@ -752,16 +751,6 @@ loopImprimirElemColMultiplicar:
     jnz     loopImprimirFilMultiplicar
 ret 
 
-ingresarEscalar:
-    mov     rdi,msjIngEscalar
-    call    puts
-
-    mov     rdi,inputNumero
-    call    gets
-
-    call    validarEscalar
-ret
-
 ingresoNumMatrizPorEscalar:
     mov     rdi,msjIngMatrizPorEscalar
     call    puts
@@ -770,25 +759,6 @@ ingresoNumMatrizPorEscalar:
     call    gets
 
     call    validarNumMatrizXEscalar
-ret
-
-validarEscalar:
-    mov     rdi,inputNumero    
-    mov     rsi,formatoInputElemento
-    mov     rdx,escalar                
-    call    checkAlign
-    sub     rsp,[plusRsp]
-
-    call    sscanf  
-    add		rsp,[plusRsp]   ;add rsp,32    
-    cmp     rax,1                   
-    jl      escalarInvalido
-ret
-
-escalarInvalido:
-    mov     rdi,msjNumeroInvalido
-    call    puts
-    jmp     ingresarEscalar
 ret
 
 validarNumMatrizXEscalar:
@@ -814,6 +784,35 @@ matrizInvalida:
     mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresoNumMatrizPorEscalar
+ret
+
+ingresarEscalar:
+    mov     rdi,msjIngEscalar
+    call    puts
+
+    mov     rdi,inputNumero
+    call    gets
+
+    call    validarEscalar
+ret
+
+validarEscalar:
+    mov     rdi,inputNumero    
+    mov     rsi,formatoInputElemento
+    mov     rdx,escalar                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      escalarInvalido
+ret
+
+escalarInvalido:
+    mov     rdi,msjNumeroInvalido
+    call    puts
+    jmp     ingresarEscalar
 ret
 
 modificiarValorDeMatriz:
@@ -843,40 +842,6 @@ modificarValor:
     imul    rbx,rbx,8
     mov     rax,qword[elementoModificado]
     mov     qword[matrices+rbx],rax
-ret
-
-ingresarElemento:
-    mov     rdi,msjIngElemento
-    call    puts
-
-    mov     rdi,inputNumero
-    call    gets
-
-    call    validarElementoModificado
-ret
-
-validarElementoModificado:
-    mov     rdi,inputNumero   
-    mov     rsi,formatoInputElemento
-    mov     rdx,elementoModificado                
-    call    checkAlign
-    sub     rsp,[plusRsp]
-
-    call    sscanf  
-    add		rsp,[plusRsp]   ;add rsp,32    
-    cmp     rax,1                   
-    jl      elementoModificadoInvalido  
-
-    cmp     qword[elementoModificado],-99    
-    jl      elementoModificadoInvalido
-    cmp     qword[elementoModificado],99  
-    jg      elementoModificadoInvalido           
-ret
-
-elementoModificadoInvalido:
-    mov     rdi,msjNumeroInvalido
-    call    puts
-    jmp     ingresarElemento
 ret
 
 ingresarMatrizElementoModificar:
@@ -925,7 +890,6 @@ ingresarFilColElementoModificar:
 ret
 
 validarFilColMatrizModificar:
-
     mov     rdi,inputDosElementos       
     mov     rsi,formatoInputDosElementos  
     mov     rdx,filaModificar                
@@ -955,6 +919,40 @@ filColModificarInvalido:
     mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarFilColElementoModificar
+ret
+
+ingresarElemento:
+    mov     rdi,msjIngElemento
+    call    puts
+
+    mov     rdi,inputNumero
+    call    gets
+
+    call    validarElementoModificado
+ret
+
+validarElementoModificado:
+    mov     rdi,inputNumero   
+    mov     rsi,formatoInputElemento
+    mov     rdx,elementoModificado                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      elementoModificadoInvalido  
+
+    cmp     qword[elementoModificado],-99    
+    jl      elementoModificadoInvalido
+    cmp     qword[elementoModificado],99  
+    jg      elementoModificadoInvalido           
+ret
+
+elementoModificadoInvalido:
+    mov     rdi,msjNumeroInvalido
+    call    puts
+    jmp     ingresarElemento
 ret
 
 consultarValorDeMatriz:
@@ -987,6 +985,41 @@ consultarValor:
     sub rsp, 8
 	call printf
 	add rsp, 8
+ret
+
+ingresarMatrizElementoConsultar:
+    mov     rdi,msjIngNumMatrizElemenCon
+    call    puts
+
+    mov     rdi,inputNumero
+    call    gets
+
+    call    validarNumMatrizConsultar
+ret
+
+validarNumMatrizConsultar:
+    mov     rdi,inputNumero 
+    mov     rsi,formatoInputElemento
+    mov     rdx,matrizAConsultar                
+    call    checkAlign
+    sub     rsp,[plusRsp]
+
+    call    sscanf  
+    add		rsp,[plusRsp]   ;add rsp,32    
+    cmp     rax,1                   
+    jl      matrizInvalidaConsultar
+
+    cmp     qword[matrizAConsultar],1    
+    jl      matrizInvalidaConsultar
+    mov     rcx,qword[cantMatrices]       
+    cmp     qword[matrizAConsultar],rcx  
+    jg      matrizInvalidaConsultar             
+ret
+
+matrizInvalidaConsultar:
+    mov     rdi,msjNumeroInvalido
+    call    puts
+    jmp     ingresarMatrizElementoConsultar
 ret
 
 ingresarFilColElementoConsultar:
@@ -1029,41 +1062,6 @@ filColConsultarInvalido:
     mov     rdi,msjNumeroInvalido
     call    puts
     jmp     ingresarFilColElementoConsultar
-ret
-
-ingresarMatrizElementoConsultar:
-    mov     rdi,msjIngNumMatrizElemenCon
-    call    puts
-
-    mov     rdi,inputNumero
-    call    gets
-
-    call    validarNumMatrizConsultar
-ret
-
-validarNumMatrizConsultar:
-    mov     rdi,inputNumero 
-    mov     rsi,formatoInputElemento
-    mov     rdx,matrizAConsultar                
-    call    checkAlign
-    sub     rsp,[plusRsp]
-
-    call    sscanf  
-    add		rsp,[plusRsp]   ;add rsp,32    
-    cmp     rax,1                   
-    jl      matrizInvalidaConsultar
-
-    cmp     qword[matrizAConsultar],1    
-    jl      matrizInvalidaConsultar
-    mov     rcx,qword[cantMatrices]       
-    cmp     qword[matrizAConsultar],rcx  
-    jg      matrizInvalidaConsultar             
-ret
-
-matrizInvalidaConsultar:
-    mov     rdi,msjNumeroInvalido
-    call    puts
-    jmp     ingresarMatrizElementoConsultar
 ret
     
 imprimirMatrices:
