@@ -69,21 +69,7 @@ section .data
 ;Elementos
     matrices         times 320 	dq  0
     matrizResta      times 64   dq  0
-    matrizARestar               dq  0
-    matriz1                     dq  0   
-    matriz2                     dq  0
-    elemento1                   dq  0
-    elemento2                   dq  0
-    matrizAMultiplicar          dq  0
-    escalar                     dq  0
     matrizMultiplicar   times 64 dq 0
-    matrizAModificar            dq  0
-    filaModificar               dw  0
-    columnaModificar            dw  0
-    elementoModificado          dq  0
-    matrizAConsultar            dq  0
-    filaConsultar               dw  0
-    columnaConsultar            dw  0
 
 section .bss
     cantMatrices          resq    1
@@ -98,6 +84,20 @@ section .bss
     matricesRestar      times 5 resq 1
     numMatRestar          resq    1
     inputNumero           resq    1
+    columnaConsultar      resw    1
+    filaConsultar         resw    1
+    matrizAConsultar      resq    1
+    matrizARestar         resq    1
+    matriz1               resq    1   
+    matriz2               resq    1
+    elemento1             resq    1
+    elemento2             resq    1
+    matrizAMultiplicar    resq    1
+    escalar               resq    1
+    matrizAModificar      resq    1
+    filaModificar         resw    1
+    columnaModificar      resw    1
+    elementoModificado    resq    1
 
 section .text
 main:
@@ -191,7 +191,7 @@ ingresoMatrices:
     sub     rcx,rcx               
     mov     rcx,qword[cantMatrices] 
 
-mensajeIngMatrices:
+loopMensajeIngMatrices:
     push    rcx
 
     mov     rdi,msjIngMatriz
@@ -201,13 +201,13 @@ mensajeIngMatrices:
     sub     rcx,rcx             
     mov     cx,word[fila]
 
-mensajeFila:
+loopMensajeFila:
     mov     qword[auxiliarFila],rcx
 
     sub     rcx,rcx             
     mov     cx,word[columna]
 
-msjColumna:
+loopMensajeColumna:
     mov     qword[auxiliarCol],rcx
 
 imprimirMsj:
@@ -251,19 +251,19 @@ validarElemento:
     inc     qword[indiceCol]
     mov     rcx,qword[auxiliarCol]
     dec     rcx
-    jnz     msjColumna
+    jnz     loopMensajeColumna
 
     mov     qword[indiceCol],1
     inc     qword[indiceFila]
     mov     rcx,qword[auxiliarFila]
     dec     rcx
-    jnz     mensajeFila
+    jnz     loopMensajeFila
 
     mov     qword[indiceFila],1
     inc     qword[indice]
     pop     rcx
     dec     rcx
-    jnz     mensajeIngMatrices
+    jnz     loopMensajeIngMatrices
 ret
 
 elementoInvalido:
@@ -364,7 +364,7 @@ calculoDesplazamientoPrimerMatriz:
     mov     qword[indiceFila],0
 
     
-guardarMatriz:
+loopGuardarMatriz:
     sub     rax,rax
     mov     rbx,qword[posicionVector]
     mov     rax,qword[matrices+rbx]
@@ -384,7 +384,7 @@ guardarMatriz:
     mov     rcx,qword[auxiliar]
     dec     rcx
     mov     qword[auxiliar],rcx
-    jnz     guardarMatriz
+    jnz     loopGuardarMatriz
 
     mov     qword[indice],1
     
@@ -392,7 +392,7 @@ guardarMatriz:
     mov     rcx,qword[cantMatricesRestar]
     dec     rcx
 
-matrizRestar:
+loopMatrizRestar:
     mov     qword[auxiliarMatrices],rcx
 
     sub     rbx,rbx
@@ -415,7 +415,7 @@ matrizRestar:
     imul    bx,word[columna]
     mov     rcx,rbx
 
-resta:
+loopResta:
     mov     qword[auxiliar],rcx
 
     mov     rbx,qword[indiceFila]
@@ -434,12 +434,12 @@ resta:
     inc     qword[indiceFila]
     mov     rcx,qword[auxiliar]
     dec     rcx
-    jnz     resta
+    jnz     loopResta
     
     inc     qword[indice]
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
-    jnz     matrizRestar
+    jnz     loopMatrizRestar
 
 imprimirMatrizResta:
     mov     qword[auxiliarImprimir],0
@@ -558,7 +558,7 @@ validarNumMatRestar:
 
     cmp     qword[numMatRestar],1    
     jl      numMatRestarInvalido    
-    mov     rcx,qword[cantMatricesRestar]    
+    mov     rcx,qword[cantMatrices]    
     cmp     qword[numMatRestar],rcx 
     jg      numMatRestarInvalido
 
@@ -595,7 +595,7 @@ igualarMatrices:
     imul    rbx,qword[matriz2]
     mov     qword[indiceMatriz2],rbx
 
-igualar:
+loopIgualar:
     mov     qword[auxiliarMatrices],rcx
     mov     rbx,qword[indiceMatriz1]
     imul    rbx,rbx,8
@@ -618,7 +618,7 @@ igualar:
 
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
-    jnz     igualar
+    jnz     loopIgualar
 
     jmp     matricesIguales
 ret
@@ -701,7 +701,7 @@ matrizPorEscalar:
 
     mov     qword[indice],0
 
-multiplicarMatriz:
+loopMultiplicarMatriz:
     mov     qword[auxiliarMatrices],rcx
 
     mov     rbx,qword[indiceVector]
@@ -721,7 +721,7 @@ multiplicarMatriz:
     inc     qword[indiceVector]
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
-    jnz     multiplicarMatriz
+    jnz     loopMultiplicarMatriz
 
 imprimirMatrizMultiplicar:
     mov     qword[auxiliarImprimir],0
@@ -849,7 +849,7 @@ modificarValor:
     dec     word[columnaModificar]
     sub     rbx,rbx
     mov     bx,word[filaModificar]
-    imul    rbx,rbx,2
+    imul    rbx,qword[columna]
     add     bx,word[columnaModificar]
     add     qword[indiceVector],rbx
     
@@ -987,7 +987,7 @@ consultarValor:
     dec     word[columnaConsultar]
     sub     rbx,rbx
     mov     bx,word[filaConsultar]
-    imul    rbx,rbx,2
+    imul    rbx,qword[columna]
     add     bx,word[columnaConsultar]
     add     qword[indiceVector],rbx
     
@@ -1093,7 +1093,7 @@ imprimirMatrices:
     sub rcx,rcx
     mov rcx,qword[cantMatrices]   
 
-imprimir:
+loopImprimir:
     mov qword[auxiliarMatrices],rcx
 
     sub rcx,rcx
@@ -1136,7 +1136,7 @@ loopImprimirElementoCol:
 
     mov     rcx,qword[auxiliarMatrices]
     dec     rcx
-    jnz     imprimir
+    jnz     loopImprimir
 ret
 
 finalizarPrograma:
